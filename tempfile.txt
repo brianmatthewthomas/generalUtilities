@@ -1,0 +1,31 @@
+<dcterms:dcterms xsi:schemaLocation="http://dublincore.org/documents/dcmi-terms/ qualifiedDcSchema.xsd" xmlns:tslac="https://www.tsl.texas.gov/" xmlns:dcterms="http://dublincore.org/documents/dcmi-terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<dcterms:identifier.filename>M-04517</dcterms:identifier.filename>
+<dcterms:relation.isFormatOf>M-4517</dcterms:relation.isFormatOf>
+<dcterms:relation.isPartOf>Texas Supreme Court records</dcterms:relation.isPartOf>
+<tslac:scotx.oldCaseNumber>3068</tslac:scotx.oldCaseNumber>
+<tslac:scotx.dateFiled>1869-04-08</tslac:scotx.dateFiled>
+<dcterms:coverage.spatial>Wood County (Tex.)</dcterms:coverage.spatial>
+<tslac:scotx.reportedIn>Unknown</tslac:scotx.reportedIn>
+<tslac:note>Nancy Simpkins is also referred to as "Nancy Simkins" throughout the case file.</tslac:note>
+<dcterms:description.abstract>Regarding payment due for a steer.</dcterms:description.abstract>
+<tslac:scotx.court>Unknown</tslac:scotx.court>
+<dcterms:source.location>Box 201-4061a</dcterms:source.location>
+<tslac:scotx.docket>201-32</tslac:scotx.docket>
+<tslac:scotx.lawyer>Donley; Hays</tslac:scotx.lawyer>
+<tslac:scotx.presidingJudge>Banks, Winston</tslac:scotx.presidingJudge>
+<dcterms:identifier.bibliographicCitation>M-4517, M case files, Case files, Texas Supreme Court records. Archives and Information Services Division, Texas State Library and Archives Commission.</dcterms:identifier.bibliographicCitation>
+<dcterms:title>M-04517</dcterms:title>
+<dcterms:creator>Texas. Supreme Court</dcterms:creator>
+<dcterms:date.digital>2021</dcterms:date.digital>
+<dcterms:language>English</dcterms:language>
+<dcterms:type>Text</dcterms:type>
+<dcterms:type>Judicial records</dcterms:type>
+<dcterms:source>Texas State Library and Archives Commission, RG 201</dcterms:source>
+<tslac:scotx.party>Russell, Jonathan</tslac:scotx.party>
+<tslac:scotx.party>Simpkins, Nancy</tslac:scotx.party>
+<dcterms:rights>The Texas State Library and Archives Commission believes that the Item is in the Public Domain under the laws of the United States. Unless expressly stated otherwise, the Texas State Library and Archives Commission makes no warranties about the Item and cannot guarantee the accuracy of this Rights Statement. State records may also include materials received by, not created by, state agencies. In that situation, copyright remains with the creator. You are responsible for your own use. Please contact the Texas State Library and Archives Commission for more information. You may need to obtain other permissions for your intended use. For example, other rights such as publicity, privacy or moral rights may limit how you may use the material.</dcterms:rights>
+<dcterms:subject>Animals</dcterms:subject>
+<dcterms:subject>Debt</dcterms:subject>
+<tslac:scotx.causeOfAction>Animals</tslac:scotx.causeOfAction>
+<tslac:scotx.causeOfAction>Debt</tslac:scotx.causeOfAction>
+</dcterms:dcterms>
