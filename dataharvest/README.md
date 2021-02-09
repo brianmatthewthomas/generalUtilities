@@ -1,5 +1,7 @@
 <h1>Data harvesting</h1>
-Data harvesting is done for various bits of metadata manipulation when you need to have some specificity on what you are updating rather than across the board updated. For example, if text "x" occurs in "y" tag, then add "z" tag plus content. The other major application is for creation web analytics based upon the UUIDs of items since that is a constant factor in a repository even if the file tree is not.
+Data harvesting is done for various bits of metadata manipulation when you need to have some specificity on what you are updating rather than across the board updated. For example, if text "x" occurs in "y" tag, then add "z" tag plus content. The other major application is for creation web analytics based upon the UUIDs of items since that is a constant factor in a repository even if the file tree is not.<br/>>
+Harvesting is a 3-step process:
+<ol><li>data harvest</li><li>error checking</li><li>patching errors in the harvest</li></ol>
 
 These tools are written with the preservica system in mind with the underlying assumption that you are harvesting raw data as well as metadata, as well as that every item in the preservation system will have some kind of metadata attached.
 <h3>python_newAPI_harvest_UUIDs_addMissingMetadata.py</h3>
@@ -27,4 +29,18 @@ To prep the output for a patch harvest you will need to replace the last "/" whi
 `csv filename` = whatever the file name you want for the error log<br/>
 `directory to walk` = the folder you wish to crawl, it will crawl subfolders recursively.
 <h4>invocation</h4>
+
 In open terminal window that has this script: `python3 python_newAPI_harvest_errorCatcher.py` . Answer the question prompts. 
+<h3>python_newAPI_harvest_patch.py</h3>
+This script will run off of the output and modified csv file from the error catcher step and harvest the data file for that listed item and any attached metadata files. The name of the file corresponds the filename in column 3 so it is important that and _metadata-# does not exist in the filename.<br/>
+If the patch item is a folder, it will reharvest everything in the folder, but only at the first level. This is a bit buggy I think.<br/>
+Finally, this will not add metadata which may be missing so you will need to check items by hand in your preservation system to ensure they have all the appropriate metadata.
+<h4>parameters</h4>
+
+`username` = system username which should be your email<br/>
+`password` = system password, using the getpass module so the terminal window won't show the password.<br/>
+`tenancy` = tenancy for the system, usually the letters before .access.preservica.com on the UA<br/>
+`csv file to use` = the name of the csv file from the previous step.
+<h4>invocation</h4>
+
+In an open terminal window that has this script: `python3 python_newAPI_harvest.py`. Answer the question prompts.
