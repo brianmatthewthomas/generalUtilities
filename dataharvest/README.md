@@ -1,5 +1,5 @@
 <h1>Data harvesting</h1>
-Data harvesting is done for various bits of metadata manipulation when you need to have some specificity on what you are updating rather than across the board updated. For example, if text "x" occurs in "y" tag, then add "z" tag plus content. The other major application is for creation web analytics based upon the UUIDs of items since that is a constant factor in a repository even if the file tree is not.<br/>>
+Data harvesting is done for various bits of metadata manipulation when you need to have some specificity on what you are updating rather than across the board updated. For example, if text "x" occurs in "y" tag, then add "z" tag plus content. The other major application is for creation web analytics based upon the UUIDs of items since that is a constant factor in a repository even if the file tree is not.<br/>
 Harvesting is a 3-step process:
 <ol><li>data harvest</li><li>error checking</li><li>patching errors in the harvest</li></ol>
 
