@@ -62,7 +62,7 @@ for dirpath, dirnames, filenames in os.walk(metadata):
                         continue
 df = PD.DataFrame(data, columns=['District', 'County', 'Conveyance'])
 df = df.drop_duplicates()
-writer = df.to_html(metadata + "/table.html", index=False)
+writer = df.to_csv(metadata + "/table.csv", index=False)
 print("finished compiling data for processing, data save")
 print("starting to compile search page")
 district = ""
@@ -89,13 +89,14 @@ countyList = set(countyList)
 countyList = list(countyList)
 countyList.sort()
 for item in countyList:
-    df2 = df.loc[df['County'] == item]
-    setList1 = set()
-    setList2 = set()
-    for index, row in df2.iterrows():
-        setList1.add(row['District'])
-        setList2.add(row['Conveyance'])
-    county += optionGenerator(item, setList1, setList2)
+    if item != "":
+        df2 = df.loc[df['County'] == item]
+        setList1 = set()
+        setList2 = set()
+        for index, row in df2.iterrows():
+            setList1.add(row['District'])
+            setList2.add(row['Conveyance'])
+        county += optionGenerator(item, setList1, setList2)
 county = county.replace("extraAttribute1", "district")
 county = county.replace("extraAttribute2", "conveyance")
 county = county.replace(" County (Tex.)</","</")
@@ -106,13 +107,14 @@ conveyanceList = set(conveyanceList)
 conveyanceList = list(conveyanceList)
 conveyanceList.sort()
 for item in conveyanceList:
-    df2 = df.loc[df['Conveyance'] == item]
-    setList1 = set()
-    setList2 = set()
-    for index, row in df2.iterrows():
-        setList1.add(row['District'])
-        setList2.add(row['County'])
-    conveyance += optionGenerator(item, setList1, setList2)
+    if item != "":
+        df2 = df.loc[df['Conveyance'] == item]
+        setList1 = set()
+        setList2 = set()
+        for index, row in df2.iterrows():
+            setList1.add(row['District'])
+            setList2.add(row['County'])
+        conveyance += optionGenerator(item, setList1, setList2)
 conveyance = conveyance.replace("extraAttribute1", "district")
 conveyance = conveyance.replace("extraAttribute2", "county")
 
@@ -351,7 +353,7 @@ function changeable2() {
 	}
 }
 function changeable3() {
-	var conveyance1 = conveyance_drop.options [conveyance_drop.selectedIndex].innerHTML;
+	var conveyance1 = conveyance_drop.options [conveyance_drop.selectedIndex].value;
 	changeable3a = document.getElementById("district_drop");
 	changeable3a_notice = document.getElementById("district_updated");
 	var changeable3a_arr = [];
