@@ -3,8 +3,8 @@ import shutil
 import lxml.etree as ET
 from preservation_utilities import preservation_utilities
 
-nsmap = {"EntityResponse": "http://preservica.com/EntityAPI/v6.2",
-"xip": "http://preservica.com/XIP/v6.2"}
+nsmap = {"EntityResponse": "http://preservica.com/EntityAPI/v6.3",
+"xip": "http://preservica.com/XIP/v6.3"}
 print("this will add a dcterms:title tag to a file")
 print("this is based on the item name in the regular file") 
 print("so if that isn't what you want don't run this script")
