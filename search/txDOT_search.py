@@ -195,6 +195,40 @@ catan = f'''<html>
 				</h3>
 			</div>'''
 settlers = '''
+<div class="tdaSearch_thing1">
+              <h3>
+                <label for="control_number">Control Number</label> <img class="tooltip_image" src="https://tsl.access.preservica.com/wp-content/uploads/sites/10/2020/06/200px-Icon-round-Question_mark.svg_.png" max-width="5px" style="cursor:help" title="Click for more information" id="tooltip_control_number"/>
+                <div class="tooltip-test" id="tooltip_control_number_1" style="display: none;">
+                  <div class="modal-content">
+                    <span class="closeify" id="closeify_tooltip_control_number">x</span>
+                    <h1 style="text-align: center;">
+                      <strong>About Control Numbers</strong>
+                    </h1>
+                    <p style="line-height: 1em;color:black;font-size:0.85em;font-family:auto;">Right of Way projects are organized by districts and then by control numbers within a district. The RCSJ/CCSJ control numbers are a unique nine-digit number for a Right of Way project using the format ####-##-###. The control number (first 4 digits) is assigned to a stretch of highway that often breaks at a county line or a major highway intersection, river or stream but can also break at any convenient location. The section number (second 2 digits) is usually assigned sequentially from the beginning of the control. The job number (last 3 digits) is a sequential number for the acquisitions that may have occurred for that section.</p>
+                    <p style="line-height: 1em;color:black;font-size:0.85em;font-family:auto;">The Department of Transportation has a <a href="https://maps.dot.state.tx.us/AGO_Template/TxDOT_Viewer/?appid=6e6821ecba51466789de423165516843" target="_blank">Real Property Asset Map tool</a> to help locate the correct control and section number. To find a control/section number zoom in on the map to the desired area and click on the highway segment you wish to get the information for. The number will be listed under Control Section. Please note that the documents available under the Real Property Asset Map may not be the same as the documents available through the TDA and it is possible that not all control/section numbers are represented in the map tool. Please also note that record digitization is continuing and not all districts/control numbers have been digitized at this time.</p>
+                  </div>
+                </div>
+                <script>
+                  var tooltip_control_number_1 = document.getElementById("tooltip_control_number_1");
+                  var tooltip_control_number = document.getElementById("tooltip_control_number");
+                  var span = document.getElementById("closeify_tooltip_control_number");
+                  tooltip_control_number.onclick = function() {
+                    tooltip_control_number_1.style.display = "block";
+                  }
+                  span.onclick = function() {
+                    tooltip_control_number_1.style.display = "none";
+                  }
+                  window.onclick = function(event) {
+                    if (event.target == tooltip_control_number_1) {
+                      tooltip_control_number_1.style.display = "none";
+                    }
+                  }
+                </script>
+                <strong style="color:purple; display: none;" id="control_number_note"> *Active filter</strong>
+                <br/>
+                <input type="text" placeholder="RCSJ/CCSJ ####-##-###" name="control_number" id="control_number" class="inputs" onkeyup="return changeable4();"/>
+              </h3>
+  			</div>
 			<div class="tdaSearch_thing1">
 				<h3>
 					<label for="search_all">Other search term</label>
@@ -214,7 +248,7 @@ settlers = '''
 		  
 			</div>
 			<div class="tdaSearch_search_form_right">
-				<img alt="District Boundary map courtesy of Texas Department of Transportation site" class="tdaSearch_graphic" src="https://tsl.access.preservica.com/wp-content/uploads/sites/10/2021/03/texas.jpg" title="District Boundary map courtesy of Texas Department of Transportation site"/>
+				<img alt="District Boundary map courtesy of Texas Department of Transportation site" class="tdaSearch_graphic" src="https://tsl.access.preservica.com/wp-content/uploads/sites/10/2021/03/texas.jpg" title="District Boundary map courtesy of Texas Department of Transportation site" style="max-width:250px"/>
 				<p class="tdaSearch_link1" style="text-align:center">
 					<a href="https://tsl.access.preservica.com/uncategorized/SO_735ef8cc-f549-4743-a401-e84b13595b06/">Browse the Right of Way records</a>
 				</p>
@@ -225,11 +259,11 @@ settlers = '''
 <div class="tdaSearch_bottom_text">
 	<h2 id="tdaSearchHelp">How to Use This Tool</h2>
 	<p>This tool prepares a search of the historic Right of Way Division records of the Texas Department of Transportation in the Texas Digital Archive (TDA). Click on "Search the Texas Digital Archive" to search the TDA using the options you select.</p>
-	<p>The records are divided by District and are actively being digitized on a district-by-district basis. Occasionally records are found filed within one district but meant to be included in another district. Due to the volume of records involved, the options in this search tool will only be updated when a district is most likely complete. For the most recent visual representation of the current district names and boundaries, go to <a href="https://www.txdot.gov/inside-txdot/district.html" target="_blank">https://www.txdot.gov/inside-txdot/district.html</a>.</p>
-	<p>Selecting a specific district will limit results to just that district and district boundaries may have changed over time. Highway names are based on how they are listed in the record, which can change over time relative to the current name of the roadway. It is recommended that users search use multiple searches with variations of potential highway names if attempting to locate a record by highway.</p>
+	<p>The records are divided by District and are actively being digitized on a district-by-district basis. Occasionally records are found filed within one district but meant to be included in another district so completed districts may see minor additions over time. Within each district records are organized by nine digit control number. Due to the volume of records involved, the options in this search tool will only be updated when a district is most likely complete. For the most recent visual representation of the current district names and boundaries, go to <a href="https://www.txdot.gov/inside-txdot/district.html" target="_blank" rel="noopener noreferrer">https://www.txdot.gov/inside-txdot/district.html</a>.</p>
+	<p>Selecting a specific district will limit results to just that district. Be aware that district boundaries may have changed over time. Highway names are based on how they are listed in the record, which can change over time relative to the current name of the roadway. It is recommended that users search with multiple variations of highway names if attempting to locate a record by highway and not getting the desired results.</p>
 	<h2 id="aboutme">About the Right of Way Division records</h2>
 	<p>These records include conveyances, maps, and titles for property owned by the Texas Department of Transportation (TxDOT) Right of Way Division. The Right of Way Division coordinates the acquisition of land to build, widen, or enhance highways and provides relocation assistance when needed. The division also coordinates utility adjustments, and the disposition and leasing of surplus real property owned by TxDOT. The records document these land transfers and date from 1924 to 2017, and some records are undated. The records are part of an ongoing digitization project by TxDOT that began with the Austin District; the project will continue with other major-municipality districts and finish with the less populous ones. Records within a district are organized by a CCSJ or RCSJ identifier. Each document within a CCSJ/RCSJ is numbered based on the order in which it was digitized; the number assigned to a document <em>is not</em> a Department of Transportation identifier. A district is usually spread across several counties but may not encompass all of a county. County borders can shift over time and counties listed for a document are based on the county boundaries at the time the record was created.</p>
-	<p>See the <a href="http://www.lib.utexas.edu/taro/tslac/13003/tsl-13003.html" target="_blank">finding aid</a> for more information about the Right of Way Division records.</p>
+	<p>See the <a href="http://www.lib.utexas.edu/taro/tslac/13003/tsl-13003.html" target="_blank" rel="noopener noreferrer">finding aid</a> for more information about the Right of Way Division records.</p>
 </div>
   <script type="text/javascript">
 function dosearch() {
@@ -240,6 +274,10 @@ function dosearch() {
             collectible = "&parenthierarchy=SO_4ec205fa-8f6a-47c7-a960-20cf4ca18420"
         } else if (collection == "HOU") {
             collectible = "&parenthierarchy=SO_0af33ec4-9d28-44d2-ae5d-8f4d9eead18c"
+        } else if (collection == "ELP") {
+            collectible = "&parenthierarchy=SO_3a09afe5-6f25-407a-9a30-aae02cea1c0f"
+        } else if (collection == "ODA") {
+            collectible = "&parenthierarchy=SO_3c76b289-ceb0-4eee-811b-9f78ff067d83"
         }
     } else {
         collectible = "&parenthierarchy=SO_735ef8cc-f549-4743-a401-e84b13595b06"
@@ -264,6 +302,25 @@ function dosearch() {
 		county2 = "";
 	}
 	var highway = hwy.value;
+    highway = highway.toUpperCase();
+  	highway = highway.replace("INTERSTATE HIGHWAY","IH");
+  	highway = highway.replace("INTERSTATE","I");
+    highway = highway.replace("HIGHWAY","HWY ");
+    highway = highway.replace("FARM TO MARKET","FM");
+    highway = highway.replace("FARM-TO-MARKET","FM");
+    highway = highway.replace("RANCH TO MARKET","RM");
+  	highway = highway.replace("RANCH-TO-MARKET","RM");
+  	highway = highway.replace(" ROAD","");
+    highway = highway.replace("UNITED STATES","US ");
+  	highway = highway.replace("US HWY","US ");
+  	highway = highway.replace("US","US ");
+  	highway = highway.replace("HWY","HWY ");
+  	highway = highway.replace("FM","FM ");
+  	highway = highway.replace("RM","RM ");
+  	highway = highway.replace("I","I ");
+  	highway = highway.replace("I H","IH");
+  	highway = highway.replace("IH","IH ");
+  	highway = highway.replace("  "," ");
 	var highway1, highway2
 	if (highway != "") {
 		highway1 = "dcterms.txdot_hwy/" + highway + "|";
@@ -281,6 +338,16 @@ function dosearch() {
 		conveyance1 = "";
 		conveyance2 = "";
 	}
+    var control_numbers = control_number.value;
+    var control_number1, control_number2
+  	if (control_number != "") {
+      control_number1 = "dcterms.txdot_controlnumber/" + control_numbers + "|";
+      control_number2 = "dcterms.txdot_controlnumber/" + control_numbers + "|";
+    } else {
+      control_number1 = "";
+      control_number2 = "";
+    }
+    
 	
 var sf = document.searchform;
 var submitto = "https://tsl.access.preservica.com/?s=" 
@@ -290,11 +357,13 @@ var submitto = "https://tsl.access.preservica.com/?s="
 + dateA 
 + highway1 
 + conveyance1 
++ control_number1 
 + county1 
 + "&saved_filters=" 
 + dateB 
 + highway2 
-+ conveyance2
++ conveyance2 
++ control_number2
 window.open(submitto);
 return false;
 }
@@ -378,6 +447,15 @@ function changeable3() {
 			changeable3b_opt[i].style.display = "";
 		}
 	}
+}
+function changeable4() {
+    var control_numbery = control_number.value;
+    var control_numbers_note = document.getElementById("control_number_note")
+  	if (control_numbery != "") {
+      control_numbers_note.style.display = "";
+    } else {
+      control_numbers_note.style.display = "none";
+    }
 }
 </script>
 </html>'''
