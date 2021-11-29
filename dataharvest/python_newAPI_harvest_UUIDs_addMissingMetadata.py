@@ -46,9 +46,9 @@ base_url = f'https://{prefix}.preservica.com/api/entity/'
 so = "structural-objects/"
 io = "information-objects/"
 dublinCore = "http://dublincore.org/documents/dcmi-terms/"
-namespaces = {'xip': 'http://preservica.com/XIP/v6.3',
-'EntityResponse': 'http://preservica.com/EntityAPI/v6.3',
-'ChildrenResponse': 'http://preservica.com/EntityAPI/v6.3'}
+namespaces = {'xip': 'http://preservica.com/XIP/v6.4',
+'EntityResponse': 'http://preservica.com/EntityAPI/v6.4',
+'ChildrenResponse': 'http://preservica.com/EntityAPI/v6.4'}
 realfilepath = input("absolute or relative filepath to put the harvested files: ")
 #start with the root structural object
 homefries = input("UUID for the collection to harvest: ")
@@ -100,7 +100,7 @@ while level != 21:
 # continue with processing
 dom = ET.parse(filename)
 root = dom.getroot()
-elements = root.xpath('.//EntityResponse:Fragment[not((@schema="http://preservica.com/LegacyXIP") or (@schema="http://preservica.com/ExtendedXIP/v6.3"))]',namespaces=namespaces)
+elements = root.xpath('.//EntityResponse:Fragment[not((@schema="http://preservica.com/LegacyXIP") or (@schema="http://preservica.com/ExtendedXIP/v6.4"))]',namespaces=namespaces)
 elementCounter = 0
 list = []
 for element in elements:
@@ -287,7 +287,7 @@ for dirpath, dirnames, filenames in os.walk(dirlevel):
 						logger2.write(elemental + "\n")
 					dom2 = ET.parse(newFile)
 					root2 = dom2.getroot()
-					things = root2.xpath('.//EntityResponse:Fragment[not((@schema="http://preservica.com/LegacyXIP") or (@schema="http://preservica.com/ExtendedXIP/v6.3"))]',namespaces=namespaces)
+					things = root2.xpath('.//EntityResponse:Fragment[not((@schema="http://preservica.com/LegacyXIP") or (@schema="http://preservica.com/ExtendedXIP/v6.4"))]',namespaces=namespaces)
 					elementCounter2 = 0
 					for thing in things:
 						try:
