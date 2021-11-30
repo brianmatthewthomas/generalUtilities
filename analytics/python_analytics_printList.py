@@ -27,7 +27,7 @@ ws = wb.create_sheet(worksheetName)
 processed = 0
 # total file count inspected
 total = 0
-nsmap = {'xip': 'http://preservica.com/XIP/v6.3',
+nsmap = {'xip': 'http://preservica.com/XIP/v6.4',
 'dcterms': 'http://dublincore.org/documents/dcmi-terms/',
 'tslac': 'https://www.tsl.texas.gov/'}
 # to document the tag being searched
