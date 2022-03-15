@@ -24,9 +24,9 @@ timer = time.time() + 600
 logger = open("log_potential_fails_patch.txt", "a")
 #set base level variables
 base_url = 'https://tsl.preservica.com/api/entity/'
-namespaces = {'xip': 'http://preservica.com/XIP/v6.2',
-'EntityResponse': 'http://preservica.com/EntityAPI/v6.2',
-'ChildrenResponse': 'http://preservica.com/EntityAPI/v6.2'}
+namespaces = {'xip': 'http://preservica.com/XIP/v6.4',
+'EntityResponse': 'http://preservica.com/EntityAPI/v6.4',
+'ChildrenResponse': 'http://preservica.com/EntityAPI/v6.4'}
 #additional information
 valuables = input("name or error log file: ")
 file = open(valuables, "r", encoding='utf-8')
@@ -52,7 +52,7 @@ for row in csvin:
 			preservation_utilities.filemaker(newFile, response)
 		dom = ET.parse(newFile)
 		root = dom.getroot()
-		things = root.xpath('.//EntityResponse:Fragment[not((@schema="http://preservica.com/LegacyXIP") or (@schema="http://preservica.com/ExtendedXIP/v6.2"))]', namespaces=namespaces)
+		things = root.xpath('.//EntityResponse:Fragment[not((@schema="http://preservica.com/LegacyXIP") or (@schema="http://preservica.com/ExtendedXIP/v6.4"))]', namespaces=namespaces)
 		elementCounter = 0
 		for thing in things:
 			try:

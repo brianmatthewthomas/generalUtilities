@@ -3,9 +3,7 @@ import sys
 import os
 import pandas as PD
 
-namespaces = {'MetadataResponse': "http://preservica.com/EntityAPI/v6.0",
-              'xip': "http://preservica.com/XIP/v6.0",
-              'dcterms': "http://dublincore.org/documents/dcmi-terms/",
+namespaces = {'dcterms': "http://dublincore.org/documents/dcmi-terms/",
               'tslac': "https://www.tsl.texas.gov/"}
 def reduceDupe(thingy):
     thingy = list(thingy)
@@ -43,6 +41,18 @@ for dirpath, dirnames, filenames in os.walk(metadata):
                 filedata = r.read()
                 if "<dcterms:dcterms" in filedata:
                     print(filename)
+                    if "v6.0" in filedata:
+                        version = "v6.0"
+                    if "v6.1" in filedata:
+                        version = "v6.1"
+                    if "v6.2" in filedata:
+                        version = "v6.2"
+                    if "v6.3" in filedata:
+                        version = "v6.3"
+                    if "v6.4" in filedata:
+                        version = "v6.4"
+                    namespaces['MetadataResponse'] = f"http://preservica.com/EntityAPI/{version}"
+                    namespaces['xip'] = f"http://preservica.com/XIP/{version}"
                     try:
                         dom = ET.parse(filename)
                         root = dom.getroot()
@@ -134,10 +144,9 @@ catan = f'''<html>
 		</p>
 		<div align="center" class="tdaSearch_search_container">
 			<div align="left" class="tdaSearch_search_warning">
-				<p>For best results, start searches as broad as possible (one field). <a href="#tdaSearchHelp">Click here</a> for more information on how to use this search tool.  These drop-down searches have known issues with some versions of Internet Explorer. We recommend using Mozilla Firefox, Google Chrome or Microsoft Edge for complete functionality.</p>
-			</div>
-			
-      <div class="tdaSearch_search_box">
+				<p>For best results, start searches as broad as possible (one field). These drop-down searches have known issues with some versions of Internet Explorer. We recommend using Mozilla Firefox, Google Chrome, or Microsoft Edge for complete functionality. <a href="#tdaSearchHelp">Click here for more information on how to use this search tool.</a></p>
+            </div>
+        <div class="tdaSearch_search_box">
         <div class="tdaSearch_search_form_left">
 		
           <form name="searchform" onSubmit="return dosearch();">
@@ -157,8 +166,8 @@ catan = f'''<html>
 				<h3>
 					<label for="date">Date(s)</label>
 					<br>
-					<span style="font-size:.75em">Between </span><input class="inputs" id="date1" placeholder="YYYY-MM-DD" type="text" style="max-width:150px"><span style="font-size:.75em"> AND </span>
-					<input class="inputs" id="date2" placeholder="YYYY-MM-DD" type="text" style="max-width:150px">
+					<span style="font-size:.75em">Between </span><input class="inputs" id="date1" placeholder="YYYY-MM-DD" type="text" style="max-width:150px" name="date" aria-label="enter the search beginning date using the format year dash month dash day"><span style="font-size:.75em"> AND </span>
+					<input class="inputs" id="date2" placeholder="YYYY-MM-DD" type="text" style="max-width:150px" aria-label="enter the search end date using the format year dash month dash day">
 					<strong id="date_note" style="color:purple; display:none;">Active filter</strong>
 				</h3>
 			</div>
@@ -197,10 +206,10 @@ catan = f'''<html>
 settlers = '''
 <div class="tdaSearch_thing1">
               <h3>
-                <label for="control_number">Control Number</label> <img class="tooltip_image" src="https://tsl.access.preservica.com/wp-content/uploads/sites/10/2020/06/200px-Icon-round-Question_mark.svg_.png" max-width="5px" style="cursor:help" title="Click for more information" id="tooltip_control_number"/>
+                <label for="control_number">Control Number</label> <img class="tooltip_image" src="https://tsl.access.preservica.com/wp-content/uploads/sites/10/2020/06/200px-Icon-round-Question_mark.svg_.png" max-width="5px" style="cursor:help" title="Click for more information" id="tooltip_control_number" tabindex="0"/>
                 <div class="tooltip-test" id="tooltip_control_number_1" style="display: none;">
                   <div class="modal-content">
-                    <span class="closeify" id="closeify_tooltip_control_number">x</span>
+                    <span class="closeify" id="closeify_tooltip_control_number" tabindex="0" title="click or press enter to close this pop-up">x</span>
                     <h1 style="text-align: center;">
                       <strong>About Control Numbers</strong>
                     </h1>
@@ -248,7 +257,7 @@ settlers = '''
 		  
 			</div>
 			<div class="tdaSearch_search_form_right">
-				<img alt="District Boundary map courtesy of Texas Department of Transportation site" class="tdaSearch_graphic" src="https://tsl.access.preservica.com/wp-content/uploads/sites/10/2021/03/texas.jpg" title="District Boundary map courtesy of Texas Department of Transportation site" style="max-width:250px"/>
+                <img class="tdaSearch_graphic" title="District Boundary map courtesy of Texas Department of Transportation website" src="https://tsl.access.preservica.com/wp-content/uploads/sites/10/2021/03/texas.jpg" alt="Map of Texas illustrating Right of Way district boundaries" style="max-width:250px" /></p>
 				<p class="tdaSearch_link1" style="text-align:center">
 					<a href="https://tsl.access.preservica.com/uncategorized/SO_735ef8cc-f549-4743-a401-e84b13595b06/">Browse the Right of Way records</a>
 				</p>
@@ -258,12 +267,12 @@ settlers = '''
 </div>
 <div class="tdaSearch_bottom_text">
 	<h2 id="tdaSearchHelp">How to Use This Tool</h2>
-	<p>This tool prepares a search of the historic Right of Way Division records of the Texas Department of Transportation in the Texas Digital Archive (TDA). Click on "Search the Texas Digital Archive" to search the TDA using the options you select.</p>
-	<p>The records are divided by District and are actively being digitized on a district-by-district basis. Occasionally records are found filed within one district but meant to be included in another district so completed districts may see minor additions over time. Within each district records are organized by nine digit control number. Due to the volume of records involved, the options in this search tool will only be updated when a district is most likely complete. For the most recent visual representation of the current district names and boundaries, go to <a href="https://www.txdot.gov/inside-txdot/district.html" target="_blank" rel="noopener noreferrer">https://www.txdot.gov/inside-txdot/district.html</a>.</p>
-	<p>Selecting a specific district will limit results to just that district. Be aware that district boundaries may have changed over time. Highway names are based on how they are listed in the record, which can change over time relative to the current name of the roadway. It is recommended that users search with multiple variations of highway names if attempting to locate a record by highway and not getting the desired results.</p>
-	<h2 id="aboutme">About the Right of Way Division records</h2>
-	<p>These records include conveyances, maps, and titles for property owned by the Texas Department of Transportation (TxDOT) Right of Way Division. The Right of Way Division coordinates the acquisition of land to build, widen, or enhance highways and provides relocation assistance when needed. The division also coordinates utility adjustments, and the disposition and leasing of surplus real property owned by TxDOT. The records document these land transfers and date from 1924 to 2017, and some records are undated. The records are part of an ongoing digitization project by TxDOT that began with the Austin District; the project will continue with other major-municipality districts and finish with the less populous ones. Records within a district are organized by a CCSJ or RCSJ identifier. Each document within a CCSJ/RCSJ is numbered based on the order in which it was digitized; the number assigned to a document <em>is not</em> a Department of Transportation identifier. A district is usually spread across several counties but may not encompass all of a county. County borders can shift over time and counties listed for a document are based on the county boundaries at the time the record was created.</p>
-	<p>See the <a href="http://www.lib.utexas.edu/taro/tslac/13003/tsl-13003.html" target="_blank" rel="noopener noreferrer">finding aid</a> for more information about the Right of Way Division records.</p>
+    <p>This tool prepares a search of the historic Right of Way Division records of the Texas Department of Transportation in the Texas Digital Archive (TDA). Click on &#8220;Search the Texas Digital Archive&#8221; to search the TDA using the options you select.</p>
+    <p>The records are divided by District and are actively being digitized on a district-by-district basis. Occasionally records are found filed within one district but meant to be included in another district so completed districts may see minor additions over time. Within each district records are organized by nine digit control number. Due to the volume of records involved, the options in this search tool will only be updated when a district is most likely complete. For the most recent visual representation of the current district names and boundaries, go to <a href="https://www.txdot.gov/inside-txdot/district.html" target="_blank" rel="noopener noreferrer">https://www.txdot.gov/inside-txdot/district.html</a>.</p>
+    <p>Selecting a specific district will limit results to just that district. Be aware that district boundaries may have changed over time. Highway names are based on how they are listed in the record, which can change over time relative to the current name of the roadway. It is recommended that users search with multiple variations of highway names if attempting to locate a record by highway and not getting the desired results.</p>
+    <h2 id="about">About the Right of Way Division records</h2>
+    <p>These records include conveyances, maps, and titles for property owned by the Texas Department of Transportation (TxDOT) Right of Way Division. The Right of Way Division coordinates the acquisition of land to build, widen, or enhance highways and provides relocation assistance when needed. The division also coordinates utility adjustments, and the disposition and leasing of surplus real property owned by TxDOT. The records document these land transfers and date from 1913 to 2017, and some records are undated. The records are part of an ongoing digitization project by TxDOT that began with the Austin District; the project will continue with other major-municipality districts and finish with the less populous ones. Records within a district are organized by a CCSJ or RCSJ identifier. Each document within a CCSJ/RCSJ is numbered based on the order in which it was digitized; the number assigned to a document <em>is not</em> a Department of Transportation identifier. A district is usually spread across several counties but may not encompass all of a county. County borders can shift over time and counties listed for a document are based on the county boundaries at the time the record was created.</p>
+    <p>For more information about the Right of Way Division records <a href="https://txarchives.org/tslac/finding_aids/13003.xml" target="_blank" rel="noopener noreferrer">see the online finding aid</a> .</p>
 </div>
   <script type="text/javascript">
 function dosearch() {
