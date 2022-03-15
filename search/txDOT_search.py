@@ -287,6 +287,8 @@ function dosearch() {
             collectible = "&parenthierarchy=SO_3a09afe5-6f25-407a-9a30-aae02cea1c0f"
         } else if (collection == "ODA") {
             collectible = "&parenthierarchy=SO_3c76b289-ceb0-4eee-811b-9f78ff067d83"
+        } else if (collection == "LBB") {
+            collectible = "&parenthierarchy=SO_1d9fc8af-2c91-42e3-8e82-a6680352d2ef"
         }
     } else {
         collectible = "&parenthierarchy=SO_735ef8cc-f549-4743-a401-e84b13595b06"
