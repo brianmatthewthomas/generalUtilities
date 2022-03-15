@@ -206,7 +206,7 @@ catan = f'''<html>
 settlers = '''
 <div class="tdaSearch_thing1">
               <h3>
-                <label for="control_number">Control Number</label> <img class="tooltip_image" src="https://tsl.access.preservica.com/wp-content/uploads/sites/10/2020/06/200px-Icon-round-Question_mark.svg_.png" max-width="5px" style="cursor:help" title="Click for more information" id="tooltip_control_number" tabindex="0"/>
+                <label for="control_number">Control Number</label> <img class="tooltip_image" src="https://tsl.access.preservica.com/wp-content/uploads/sites/10/2020/06/200px-Icon-round-Question_mark.svg_.png" max-width="5px" style="cursor:help" title="Click for more information" aria-label="tooltip image to activate a pop-up help box id="tooltip_control_number" tabindex="0"/>
                 <div class="tooltip-test" id="tooltip_control_number_1" style="display: none;">
                   <div class="modal-content">
                     <span class="closeify" id="closeify_tooltip_control_number" tabindex="0" title="click or press enter to close this pop-up">x</span>
