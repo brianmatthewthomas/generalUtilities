@@ -27,9 +27,7 @@ ws = wb.create_sheet(worksheetName)
 processed = 0
 # total file count inspected
 total = 0
-nsmap = {'xip': 'http://preservica.com/XIP/v6.4',
-'dcterms': 'http://dublincore.org/documents/dcmi-terms/',
-'tslac': 'https://www.tsl.texas.gov/'}
+
 # to document the tag being searched
 print()
 print("initiating UUID collection")
@@ -56,6 +54,17 @@ for dirpath, dirnames, filenames in os.walk(seriousFilepath):
 				with open(filename, "r") as f:
 					filedata = f.read()
 					if "<xip:Title>" in filedata:
+						if "/v6.4" in filedata:
+							version = "6.4"
+						if "/v6.3" in filedata:
+							version = "6.3"
+						if "/v6.2" in filedata:
+							version = "6.2"
+						if "/v6.1" in filedata:
+							version = "6.1"
+						nsmap = {'xip': f'http://preservica.com/XIP/v{version}',
+								 'dcterms': 'http://dublincore.org/documents/dcmi-terms/',
+								 'tslac': 'https://www.tsl.texas.gov/'}
 						try:
 							tree = ET.parse(filename)
 							root = tree.getroot()
