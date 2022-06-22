@@ -3,8 +3,6 @@ import shutil
 import lxml.etree as ET
 from preservation_utilities import preservation_utilities
 
-nsmap = {"EntityResponse": "http://preservica.com/EntityAPI/v6.3",
-"xip": "http://preservica.com/XIP/v6.3"}
 print("this will add a dcterms:title tag to a file")
 print("this is based on the item name in the regular file") 
 print("so if that isn't what you want don't run this script")
@@ -22,6 +20,13 @@ for dirpath, dirnames, filenames in os.walk(walker):
 			with open(filename1, "r") as f:
 				filedata = f.read()
 				if "title>" not in filedata:
+					if "EntityAPI/v6.3" in filedata:
+						api = "v6.3"
+					if "EntityAPI/v6.4" in filedata:
+						api = "v6.4"
+					if "EntityAPI/v6.5" in filedata:
+						api = "v6.5"
+					nsmap = {"EntityResponse": f"http://preservica.com/EntityAPI/{api}","xip": f"http://preservica.com/XIP/{api}"}
 					print(filename1, "missing title, adding")
 					file2 = filename1[:-15] + ".xml"
 					dom = ET.parse(file2)
