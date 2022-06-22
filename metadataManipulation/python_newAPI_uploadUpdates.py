@@ -62,6 +62,8 @@ for dirpath, dirnames, filenames in os.walk(seriousFilepath):
                         nameOfSpace = "v6.3"
                     if "EntityAPI/v6.4" in filedata:
                         nameOfSpace = "v6.4"
+                    if "EntityAPI/v6.5" in filedata:
+                        nameOfSpace = "v6.5"
                     namespaces = {'xip': f'http://preservica.com/XIP/{nameOfSpace}',
                                   'EntityResponse': f'http://preservica.com/EntityAPI/{nameOfSpace}',
                                   'ChildrenResponse': f'http://preservica.com/EntityAPI/{nameOfSpace}',
