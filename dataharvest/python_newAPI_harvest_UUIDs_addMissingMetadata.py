@@ -51,10 +51,10 @@ namespaces = {'xip': f'http://preservica.com/XIP/{version}',
 'EntityResponse': f'http://preservica.com/EntityAPI/{version}',
 'ChildrenResponse': f'http://preservica.com/EntityAPI/{version}'}
 realfilepath = input("absolute or relative filepath to put the harvested files: ")
+metadata = input("Name of metadata file to insert if none exists: ")
 #start with the root structural object
 homefries = input("UUID for the collection to harvest: ")
 jumpPoint = base_url + so + homefries
-metadata = input("Name of metadata file to insert if none exists: ")
 #target = input("target directory to save crawl to: ")
 response = requests.get(jumpPoint, headers=headers)
 status = response.status_code
