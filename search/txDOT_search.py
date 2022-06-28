@@ -281,14 +281,18 @@ function dosearch() {
 	if (collection != "") {
         if (collection == "AUS") {
             collectible = "&parenthierarchy=SO_4ec205fa-8f6a-47c7-a960-20cf4ca18420"
-        } else if (collection == "HOU") {
-            collectible = "&parenthierarchy=SO_0af33ec4-9d28-44d2-ae5d-8f4d9eead18c"
         } else if (collection == "ELP") {
             collectible = "&parenthierarchy=SO_3a09afe5-6f25-407a-9a30-aae02cea1c0f"
-        } else if (collection == "ODA") {
-            collectible = "&parenthierarchy=SO_3c76b289-ceb0-4eee-811b-9f78ff067d83"
+        } else if (collection == "HOU") {
+            collectible = "&parenthierarchy=SO_0af33ec4-9d28-44d2-ae5d-8f4d9eead18c"
         } else if (collection == "LBB") {
             collectible = "&parenthierarchy=SO_1d9fc8af-2c91-42e3-8e82-a6680352d2ef"
+        } else if (collection == "LRD") {
+            collectible = "&parenthierarchy=SO_0b3f3826-a42a-4650-aa47-d1eb54ee31e7"
+        } else if (collection == "ODA") {
+            collectible = "&parenthierarchy=SO_3c76b289-ceb0-4eee-811b-9f78ff067d83"
+        } else if (collection == "SJT") {
+            collectible = "&parenthierarchy=SO_4d31c886-a8af-48f6-94e2-13ff3902fb52"
         }
     } else {
         collectible = "&parenthierarchy=SO_735ef8cc-f549-4743-a401-e84b13595b06"
