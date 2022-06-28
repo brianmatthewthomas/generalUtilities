@@ -20,17 +20,20 @@ for dirpath, dirnames, filenames in os.walk(walker):
 			with open(filename1, "r") as f:
 				filedata = f.read()
 				if "title>" not in filedata:
-					if "EntityAPI/v6.3" in filedata:
-						api = "v6.3"
-					if "EntityAPI/v6.4" in filedata:
-						api = "v6.4"
-					if "EntityAPI/v6.5" in filedata:
-						api = "v6.5"
-					nsmap = {"EntityResponse": f"http://preservica.com/EntityAPI/{api}","xip": f"http://preservica.com/XIP/{api}"}
 					print(filename1, "missing title, adding")
 					file2 = filename1[:-15] + ".xml"
 					dom = ET.parse(file2)
-					title = dom.find(".//xip:Title", namespaces=nsmap).text
+					#construct the namespaces for later on
+					root = dom.getroot()
+					namespaces = root.nsmap
+					namespaces['xmlns'] = namespaces[None]
+					namespaces.pop(None,None)
+					namespaces['dcterms'] = "http://dublincore.org/documents/dcmi-terms/"
+					namespaces['tslac'] = 'https://www.tsl.texas.gov/'
+					namespaces['MetadataResponse'] = namespaces['xmlns']
+					namespaces['EntityResponse'] = namespaces['xmlns']
+					namespaces['ChildrenResponse'] = namespaces['xmlns']
+					title = dom.find(".//xip:Title", namespaces=namespaces).text
 					if len(title) < 9:
 						title2 = title
 					else:

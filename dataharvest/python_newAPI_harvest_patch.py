@@ -24,9 +24,6 @@ timer = time.time() + 600
 logger = open("log_potential_fails_patch.txt", "a")
 #set base level variables
 base_url = 'https://tsl.preservica.com/api/entity/'
-namespaces = {'xip': 'http://preservica.com/XIP/v6.4',
-'EntityResponse': 'http://preservica.com/EntityAPI/v6.4',
-'ChildrenResponse': 'http://preservica.com/EntityAPI/v6.4'}
 #additional information
 valuables = input("name or error log file: ")
 file = open(valuables, "r", encoding='utf-8')
@@ -51,8 +48,17 @@ for row in csvin:
 		else:
 			preservation_utilities.filemaker(newFile, response)
 		dom = ET.parse(newFile)
+		#construct the namespaces for later on
 		root = dom.getroot()
-		things = root.xpath('.//EntityResponse:Fragment[not((@schema="http://preservica.com/LegacyXIP") or (@schema="http://preservica.com/ExtendedXIP/v6.4"))]', namespaces=namespaces)
+		namespaces = root.nsmap
+		namespaces['xmlns'] = namespaces[None]
+		namespaces.pop(None,None)
+		namespaces['dcterms'] = "http://dublincore.org/documents/dcmi-terms/"
+		namespaces['tslac'] = 'https://www.tsl.texas.gov/'
+		namespaces['MetadataResponse'] = namespaces['xmlns']
+		namespaces['EntityResponse'] = namespaces['xmlns']
+		namespaces['ChildrenResponse'] = namespaces['xmlns']
+		things = root.xpath('.//EntityResponse:Fragment[not((@schema="http://preservica.com/LegacyXIP") or (@schema="http://preservica.com/ExtendedXIP/v6.0"))]', namespaces=namespaces)
 		elementCounter = 0
 		for thing in things:
 			try:

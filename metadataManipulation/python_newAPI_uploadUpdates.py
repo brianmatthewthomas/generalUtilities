@@ -54,22 +54,19 @@ for dirpath, dirnames, filenames in os.walk(seriousFilepath):
                 print(filename)
                 log.write(filename + "\n")
                 dom = ET.parse(filename)
+                #construct the namespaces for later on
+                root = dom.getroot()
+                namespaces = root.nsmap
+                namespaces['xmlns'] = namespaces[None]
+                namespaces.pop(None,None)
+                namespaces['dcterms'] = "http://dublincore.org/documents/dcmi-terms/"
+                namespaces['tslac'] = 'https://www.tsl.texas.gov/'
+                namespaces['MetadataResponse'] = namespaces['xmlns']
+                namespaces['EntityResponse'] = namespaces['xmlns']
+                namespaces['ChildrenResponse'] = namespaces['xmlns']
+                nameOfSpace = namespaces['xmlns'].split("/")[-1]
                 with open(filename, "r") as f:
                     filedata = f.read()
-                    if "EntityAPI/v6.2" in filedata:
-                        nameOfSpace = "v6.2"
-                    if "EntityAPI/v6.3" in filedata:
-                        nameOfSpace = "v6.3"
-                    if "EntityAPI/v6.4" in filedata:
-                        nameOfSpace = "v6.4"
-                    if "EntityAPI/v6.5" in filedata:
-                        nameOfSpace = "v6.5"
-                    namespaces = {'xip': f'http://preservica.com/XIP/{nameOfSpace}',
-                                  'EntityResponse': f'http://preservica.com/EntityAPI/{nameOfSpace}',
-                                  'ChildrenResponse': f'http://preservica.com/EntityAPI/{nameOfSpace}',
-                                  'MetadataResponse': f'http://preservica.com/EntityAPI/{nameOfSpace}',
-                                  'dcterms': 'http://dublincore.org/documents/dcmi-terms/',
-                                  'tslac': 'https://www.tsl.texas.gov/'}
                     entityURL = dom.find('.//MetadataResponse:Self', namespaces=namespaces).text
                     xipRef = dom.find('.//xip:Ref', namespaces=namespaces).text
                     xipEntity = dom.find('.//xip:Entity', namespaces=namespaces).text
