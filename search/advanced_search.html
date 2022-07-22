@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<h2 class="tdaSearch_search_title" style="text-align:center;color: #a91e2f" id="top">
+  <strong>Advanced Search</strong><br>
+</h2>
+<div align="center" class="tdaSearch_search_container">
+	<div align="left" class="tdaSearch_search_warning">
+		<p>Use the advanced search to help you navigate the various search options available in the TDA. Search and discovery is only as good as the data available. Born-digital materials do not usually have expanded data such as county or subject terms/keyword. Instead, use the general search option to do a full-text search of documents.</p>
+		<p><span style="color: #a91d2f;font-weight:bold;">Note:</span> Search is based on a elimination method. Two contradictory terms will yield no results rather than the results of both options.</p>
+  	</div>
+<div class="tdaSearch_search_form_left" style="padding-left:10px">
+<form id="form" onsubmit="return master_filter()">
+          <div class="tdaSearch_thing1">
+            <h3>
+              <label for="search_all">
+                <span style="position:relative">General Search terms</span>
+              </label>
+              <div>
+              <input name="search_all" id="search_all" placeholder="See search tips for help" type="text" class="inputs">
+              </div>
+            </h3>
+          </div>
+			<div class="tdaSearch_thing1">
+				<h3>
+					<label for="date1">Date range</label>
+					<br>
+					<span style="font-size:.75em">Between </span><input class="inputs" id="date1" placeholder="YYYY-MM-DD" type="text" style="max-width:150px" name="date" aria-label="enter the search beginning date using the format year dash month dash day"><span style="font-size:.75em"> AND </span>
+					<input class="inputs" id="date2" placeholder="YYYY-MM-DD" type="text" style="max-width:150px" aria-label="enter the search end date using the format year dash month dash day">
+				</h3>
+			</div>
+          <div class="tdaSearch_thing1">
+            <h3>
+              <label for="collection_name">
+                <span style="position:relative">Collection name</span>
+              </label>
+              <div>
+              <input name="collection_name" id="collection_name" placeholder="Name of Collection" type="text" class="inputs">
+              </div>
+            </h3>
+          </div>
+          <div class="tdaSearch_thing1">
+            <h3>
+              <label for="locations">
+                <span style="position:relative">Location name</span>
+              </label>
+              <div>
+              <input name="locations" id="locations" placeholder="Name of place" type="text" class="inputs">
+              </div>
+            </h3>
+          </div>
+          <div class="tdaSearch_thing1">
+            <h3>
+              <label for="subject">
+                <span style="position:relative">Subject</span>
+              </label>
+              <div>
+              <input name="subject" id="subject" placeholder="Formal Subject terms" type="text" class="inputs">
+              </div>
+            </h3>
+          </div>
+          <div class="tdaSearch_thing1">
+            <h3>
+              <label for="creator">
+                <span style="position:relative">Creator name</span>
+              </label>
+              <div>
+              <input name="creator" id="creator" placeholder="Name of creating entity" type="text" class="inputs">
+              </div>
+            </h3>
+  		</div>
+          <div class="tdaSearch_thing1">
+            <h3>
+              <label for="contributor">
+                <span style="position:relative">Contributor name</span>
+              </label>
+              <div>
+              <input name="contributor" id="contributor" placeholder="Name of entity contributing to creation" type="text" class="inputs">
+              </div>
+            </h3>
+  		</div>
+          <div class="tdaSearch_thing1">
+            <h3>
+              <label for="type">
+                <span style="position:relative">Type of thing</span>
+              </label>
+              <div>
+              <input name="type" id="type" placeholder="Type of thing (e.g. 'Document')" type="text" class="inputs">
+              </div>
+            </h3>
+          </div>
+          <div class="tdaSearch_thing1">
+            <h3>
+              <label for="legislative">
+                <span style="position:relative">Legislative period (legislative records only)</span>
+              </label>
+              <div>
+              <input name="legislative" id="legislative" placeholder="Legislative period (e.g. 62nd Legislature)" type="text" class="inputs">
+              </div>
+            </h3>
+          </div>
+          <div class="tdaSearch_thing1">
+            <h3>
+              <label for="additional">
+                <span style="position:relative">Additional search filters</span>
+              </label>
+              <div>
+                <select name="additional" id="additional">
+                  <option checked="checked" value="">Choose an additional filter</option>
+                  <option value="dcterms.dcterms_uniqueID_freetext">Identifier</option>
+                  <option value="dcterms.tslac_collector_freetext">Collector</option>
+                  <option value="dcterms.dcterms_description_freetext">Description</option>
+                  <option value="dcterms.dcterms_filename_freetext">Filename</option>
+                  <option value="dcterms.dcterms_format_freetext">Format</option>
+                  <option value="dcterms.scotx_old_case_number">Supreme Court: Old case number</option>
+                  <option value="dcterms.scotx_date_filed">Supreme Court: Date filed</option>
+                  <option value="dcterms.scotx_court">Supreme Court: Court name</option>
+                  <option value="dcterms.scotx_judge">Supreme Court: Judge name</option>
+                  <option value="dcterms.scotx_lawyer">Supreme Court: Lawyer name</option>
+                  <option value="dcterms.scotx_party">Supreme Court: Party/Parties</option>
+                  <option value="dcterms.scotx_case_freetext">Supreme Court: Cause of Action</option>
+                  <option value="dcterms.senate_committee">Senate recordings: Committee name</option>
+                  <option value="dcterms.military_org">Military Department: Organization</option>
+                  <option value="dcterms.soldier">Solider name</option>
+                  <option value="dcterms.txdot_district">Department of Transportation: Right of Way District</option>
+                  <option value="dcterms.txdot_conveyance">Department of Transportation: Right of Way Conveyance Type</option>
+                  <option value="dcterms.txdot_hwy">Department of Transportation: Right of Way Highway</option>
+                  <option value="dcterms.txdot_controlnumber">Department of Transportation: Right of Way Control Number</option>
+                </select>
+              <input name="additional_text" id="additional_text" placeholder="insert additional term here" type="text" class="inputs">
+              </div>
+            </h3>
+          </div>
+          <br>
+          <div class="tdaSearch_thing5" style="text-align: left;">
+            <input onclick="location.reload()" style="height:2.75em;" type="reset" value="Reset options">
+				  <input style="height:2.75em;" type="submit" value="Search the Texas Digital Archive">
+          </div>
+			<div class="tdaSearch_thing5">
+			</div>
+        </form>
+</div>
+<div class="tdaSearch_search_form_right">
+<div id="tooltip_image">
+        <img src="https://tsl.access.preservica.com/wp-content/uploads/sites/10/2020/04/filePreview2.jpg" class="tdaSearch_graphic" id="court_graphic">
+  <figcaption style="color:#a91d2f;font-weight:bold">Example Supreme Court M-Case record</figcaption>
+</div></div><script type="text/javascript">
+function master_filter() {
+  var dately = date1.value;
+  var datelier = date2.value;
+  var dateA, dateB, date_note;
+  if (dately != "") {
+    dateA = "dcterms.dcterms_date/" + dately + "%20-%20" + datelier + "|";
+    dateB = "dcterms.dcterms_date/" + dately + "%20-%20" + datelier + "|";
+  } else {
+    dateA = "";
+    dateB = "";
+  }
+  var collection = collection_name.value;
+  var collectionA
+  if (collection != "") {
+    collectionA = "dcterms.dcterms_hierarchy_freetext/*" + collection + "*|";
+  } else {
+    collectionA = "";
+  }
+  var locationsy = locations.value;
+  var locationA
+  if (locationsy != "") {
+    locationA = "dcterms.dcterms_geographic_freetext/*" + locationsy + "*|";
+  } else {
+    locationA = "";
+  }
+  var subjects = subject.value;
+  var subjectsA
+  if (subjects != "") {
+    subjectsA = "dcterms.dcterms_subject_freetext/*" + subjects + "*|";
+  } else {
+    subjectsA = "";
+  }
+  var creators = creator.value;
+  var creatorA
+  if (creators != "") {
+    creatorA = "dcterms.dcterms_creator_freetext/*" + creators + "*|";
+  } else {
+    creatorA = "";
+  }
+  var contributors = contributor.value;
+  var contributorA
+  if (contributors != "") {
+    contributorA = "dcterms.dcterms_contributor_freetext/*" + contributors + "*|";
+  } else {
+    contributorA = "";
+  }
+  var types = type.value;
+  var typeA
+  if (types != "") {
+    typeA = "dcterms.dcterms_type_freetext/*" + types + "*|";
+  } else {
+    typeA = "";
+  }
+  var legislature = legislative.value;
+  var legislatureA
+  if (legislature != "") {
+    legislatureA = "dcterms.leg_session/*" + legislature + "*|";
+  } else {
+    legislatureA = "";
+  }
+  var additionals = additional.options [additional.selectedIndex].value;
+  var additional_texts = additional_text.value;
+  var added_value
+  if (additionals != "") {
+    added_value = additionals + "/*" + additional_texts + "*|";
+  } else {
+    added_value = "";
+  }
+
+	var sf = document.searchform;
+	var submitto = "https://tsl.access.preservica.com/?s="
+    + search_all.value
+    + "&hh_cmis_filter="
+    + dateA
+    + collectionA
+    + locationA
+    + subjectsA
+    + creatorA
+    + typeA
+    + contributorA
+    + legislatureA
+    + added_value
+    + "&saved_filters="
+    + dateB
+    + collectionA
+    + locationA
+    + subjectsA
+    + creatorA
+    + typeA
+    + contributorA
+    + legislatureA
+    + added_value;
+    window.open(submitto);
+    return false;
+    }
+</script>
+  <br>
+<script>
+var coll = document.getElementsByClassName("collapsible");
+var i;
+
+for (i = 0; i < coll.length; i++) {
+  coll[i].addEventListener("click", function() {
+    this.classList.toggle("active");
+    var content = this.parentNode.lastElementChild;
+    if (content.style.maxHeight){
+      content.style.maxHeight = null;
+    } else {
+      content.style.maxHeight = content.scrollHeight + "px";
+    }
+  });
+}
+</script>
+</div>
+<body>
+
+</body>
+</html>
