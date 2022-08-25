@@ -212,7 +212,7 @@ def harvest(valuables):
                             response = requests.get(elemental, headers=headers)
                             status = response.status_code
                             if status == 401:
-                                print(new_file, "may have failes, logging back in")
+                                print(new_file, "may have failed, logging back in")
                                 logger.write(new_file + "\n")
                                 headers = preservation_utilities.login(url, payload)
                                 response = requests.get(elemental, headers=headers)
@@ -278,7 +278,7 @@ def harvest(valuables):
                                 preservation_utilities.filemaker(child_file, response)
                         dom3 = ET.parse(child_file)
                         root3 = dom3.getroot()
-                        things = root3.xpath('.//ChildrenResponse"TotalResults', namespaces=namespaces)
+                        things = root3.xpath('.//ChildrenResponse:TotalResults', namespaces=namespaces)
                         for thing in things:
                             hits = int(thing.text)
                             children_start = 1000
@@ -292,7 +292,7 @@ def harvest(valuables):
                                                             headers=headers)
                                     status = response.status_code
                                     if status == 401:
-                                        print(f"{child_file} may have failed, loggin back in")
+                                        print(f"{child_file} may have failed, logging back in")
                                         logger.write(child_file + "\n")
                                         headers = preservation_utilities.login(url, payload)
                                         response = requests.get(root_child + str(children_start) + max_child,
@@ -527,7 +527,7 @@ while True:
             dir = ""
             for dirpath, dirnames, filenames in os.walk(crawler):
                 counter = 0
-                status = len(filename)
+                status = len(filenames)
                 for filename in filenames:
                     counter += 1
                     window['-Progress-'].update_bar(counter, status)
