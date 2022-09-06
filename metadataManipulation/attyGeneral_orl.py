@@ -79,16 +79,27 @@ def row_converter(row, listy):
     print(pictionary)
     return pictionary
 
-
+def dateify(date):
+    date = date.split(" ")[0]
+    if "/" in date:
+        date = date.split("/")
+        day = date[0]
+        if len(day) < 2:
+            day = "0" + day
+        month = date[1]
+        if len(month) < 2:
+            month = "0" + month
+        date = date[2] + "-" + month + "-" + day
+    return date
 def prettify(elem):
     rough_string = ElementTree.tostring(elem, 'utf-8')
     reparse = minidom.parseString(rough_string)
     return reparse.toprettyxml(indent="    ")
 
 #toSort = input("folder to sort:")
-toSort = "/media/sf_Z_DRIVE/Working/OAG/working/2022_066_20220803/2003"
+toSort = "/media/sf_Z_DRIVE/Working/OAG/2022_066_20220803/2007"
 #targetSort = input("where to put the sorted files: ")
-targetSort = "/media/sf_Z_DRIVE/Working/OAG/working/presentation1"
+targetSort = "/media/sf_Z_DRIVE/Working/OAG/working/presentation6"
 for dirpath, dirnames, filenames in os.walk(toSort):
     for filename in filenames:
         sorting = folder_name(filename)
@@ -103,7 +114,7 @@ for dirpath, dirnames, filenames in os.walk(toSort):
             print(filename, "already copied")
 
 #spreadsheet = input("input the spreadsheet name with filepath: ")
-spreadsheet = "/media/sf_Z_DRIVE/Working/OAG/working/2022_066_20220803/Metadata for TSLAC 1997-2003/OpenRec2003.xls"
+spreadsheet = "/media/sf_Z_DRIVE/Working/OAG/2022_066_20220803/Metadata for TSLAC 1997-2003/OpenRec2007.xlsx"
 df = PD.read_excel(spreadsheet, dtype=object)
 abbott_list = [304, 307, 349, 922, 2035, 2080, 304, 307, 3403, 3462, 349, 3947, 4480, 4797, 4803, 4864, 4906, 5032,
                5122, 5464, 5871, 6055, 6190, 6213, 6282, 6312, 6534, 6670]
@@ -127,16 +138,9 @@ for row in df.itertuples():
     valuables['status_date'] = str(valuables['status_date'])
     valuables['received_date'] = str(valuables['received_date'])
     date = valuables['status_date'].split(" ")[0]
-    if "/" in date:
-        date = date.split("/")
-        year = int(date[2])
-        day = date[0]
-        if len(day) < 2:
-            day = "0" + day
-        month = date[1]
-        if len(month) < 2:
-            month = "0" + month
-        date = date[2] + "-" + month + "-" + day
+    date = dateify(valuables['status_date'])
+    valuables['status_date'] = dateify(valuables['status_date'])
+    valuables['received_date'] = dateify(valuables['received_date'])
     year = int(date[:4])
     created = SubElement(dcterms, 'dcterms:date.created')
     created.text = date
