@@ -83,10 +83,10 @@ def dateify(date):
     date = date.split(" ")[0]
     if "/" in date:
         date = date.split("/")
-        day = date[0]
+        day = date[1]
         if len(day) < 2:
             day = "0" + day
-        month = date[1]
+        month = date[0]
         if len(month) < 2:
             month = "0" + month
         date = date[2] + "-" + month + "-" + day
@@ -100,7 +100,7 @@ def prettify(elem):
 toSort = "/media/sf_Z_DRIVE/Working/OAG/2022_066_20220803/2007"
 #targetSort = input("where to put the sorted files: ")
 targetSort = "/media/sf_Z_DRIVE/Working/OAG/working/presentation6"
-for dirpath, dirnames, filenames in os.walk(toSort):
+'''for dirpath, dirnames, filenames in os.walk(toSort):
     for filename in filenames:
         sorting = folder_name(filename)
         sorting = targetSort + "/" + sorting + "/" + filename
@@ -112,7 +112,7 @@ for dirpath, dirnames, filenames in os.walk(toSort):
             print("copied", filename, "to", sorting)
         else:
             print(filename, "already copied")
-
+'''
 #spreadsheet = input("input the spreadsheet name with filepath: ")
 spreadsheet = "/media/sf_Z_DRIVE/Working/OAG/2022_066_20220803/Metadata for TSLAC 1997-2003/OpenRec2007.xlsx"
 df = PD.read_excel(spreadsheet, dtype=object)
@@ -240,12 +240,11 @@ for row in df.itertuples():
     dateReceived.text = valuables['received_date'][:10]
     dateIssued = SubElement(dcterms, 'tslac:attyGeneral.dateIssued')
     dateIssued.text = valuables['status_date'][:10]
-    toSave = "or" + identifier1 + identifier2 + ".pdf.xml"
+    toSave = "or" + identifier1 + identifier2 + ".pdf.metadata"
     print(toSave)
     sorting = folder_name(toSave)
     sorting = targetSort + "/" + sorting + "/" + toSave
-
-    metadatafile = "./2007/" + valuables['issued_as'] + identifier2 + ".pdf.xml"
+    folder_maker(sorting)
     metadata = open(sorting, "wt", encoding="utf-8")
     metadata.write(prettify(dcterms))
     metadata.close()
