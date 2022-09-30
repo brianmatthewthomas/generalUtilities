@@ -114,7 +114,7 @@ targetSort = "/media/sf_Z_DRIVE/Working/OAG/working/presentation6"
             print(filename, "already copied")
 '''
 #spreadsheet = input("input the spreadsheet name with filepath: ")
-spreadsheet = "/media/sf_Z_DRIVE/Working/OAG/2022_066_20220803/Metadata for TSLAC 1997-2003/OpenRec2007.xlsx"
+spreadsheet = "/media/sf_Z_DRIVE/Working/OAG/2022_066_20220803/Metadata for TSLAC 1997-2003/ORD_ORLClosed_2007.xlsx"
 df = PD.read_excel(spreadsheet, dtype=object)
 abbott_list = [304, 307, 349, 922, 2035, 2080, 304, 307, 3403, 3462, 349, 3947, 4480, 4797, 4803, 4864, 4906, 5032,
                5122, 5464, 5871, 6055, 6190, 6213, 6282, 6312, 6534, 6670]
@@ -135,12 +135,12 @@ for row in df.itertuples():
     relation.text = 'Texas Attorney General Open Records Letter Rulings'
     ocrNote = SubElement(dcterms, 'tslac:note')
     ocrNote.text = 'Optical character recognition of these files was completed using automated tools and have not been reviewed for accuracy.'
-    valuables['status_date'] = str(valuables['status_date'])
-    valuables['received_date'] = str(valuables['received_date'])
-    date = valuables['status_date'].split(" ")[0]
-    date = dateify(valuables['status_date'])
-    valuables['status_date'] = dateify(valuables['status_date'])
-    valuables['received_date'] = dateify(valuables['received_date'])
+    valuables['dt_status'] = str(valuables['dt_status'])
+    valuables['dt_received'] = str(valuables['dt_received'])
+    date = valuables['dt_status'].split(" ")[0]
+    date = dateify(valuables['dt_status'])
+    valuables['dt_status'] = dateify(valuables['dt_status'])
+    valuables['dt_received'] = dateify(valuables['dt_received'])
     year = int(date[:4])
     created = SubElement(dcterms, 'dcterms:date.created')
     created.text = date
@@ -184,17 +184,17 @@ for row in df.itertuples():
     title.text = f'Open Records Letter Ruling {identifierText}'
     citation = SubElement(dcterms, 'dcterms:identifier.bibliographicCitation')
     citation.text = f"{title.text}, Texas Attorney General Open Records Letter Rulings, Texas Attorney General's records. Archives and Information Services Division, Texas State Library and Archives Commission."
-    valuables['Last Name'] = str(valuables['Last Name'])
-    valuables['First Name'] = str(valuables['First Name'])
-    valuables['GB_Name'] = str(valuables['GB_Name'])
+    valuables['gb_name_last'] = str(valuables['gb_name_last'])
+    valuables['gb_name_first'] = str(valuables['gb_name_first'])
+    valuables['GoverningBody'] = str(valuables['GoverningBody'])
     valuables['gb_entity'] = str(valuables['gb_entity'])
-    requestor1 = valuables['Last Name'] + ", " + valuables['First Name']
-    requestor1_direct = valuables['First Name'] + " " + valuables['Last Name']
+    requestor1 = valuables['gb_name_last'] + ", " + valuables['gb_name_first']
+    requestor1_direct = valuables['gb_name_first'] + " " + valuables['gb_name_last']
     #set default valuable to deal with blank entity fields
     requestor2 = "Unspecified government entity"
-    if valuables['gb_entity'] != "":
-        requestor2 = str(valuables['gb_entity']).title()
-    requestor3 = valuables['GB_Name']
+    if valuables['GoverningBody'] != "":
+        requestor2 = str(valuables['GoverningBody']).title()
+    requestor3 = valuables['gb_entity']
     if "&" not in requestor2 and ", " in requestor2:
         if "City" in requestor2:
             geo = requestor2.split(", ")[0] + " (Tex.)"
@@ -209,18 +209,29 @@ for row in df.itertuples():
         elif ", " in requestor2 and len(requestor2.split(", ")) == 2:
             templist = requestor2.split(", ")
             requestor2 = templist[1] + " " + templist[0]
+    if ", " in requestor3 and len(requestor3.split(", ")) == 2:
+        templist = requestor3.split(", ")
+        requestor3 = templist[1] + " " + templist[0]
+    if requestor3 == "nan":
+        requestor3 = requestor2
+        valuables['gb_entity'] = valuables['GoverningBody']
     keywords = [requestor1, requestor3, requestor2, attyGen]
+    keywords = set(keywords)
+    keywords = list(keywords)
+    keywords.sort()
     for item in keywords:
         keyword = SubElement(dcterms, 'tslac:keyword')
         keyword.text = item
     subject = SubElement(dcterms, "dcterms:subject")
     subject.text = subject1
-    if requestor1_direct != requestor3:
+    if requestor2 != requestor3:
         representation = f' of {requestor3}'
     else:
         representation = ""
     description = SubElement(dcterms, 'dcterms:description.abstract')
-    description.text = f"{title.text} dated {created.text}, responding to a decision request from {requestor1_direct}{representation} on behalf of {requestor2}."
+    myDescription = f"{title.text} dated {created.text}, responding to a decision request from {requestor1_direct}{representation} on behalf of {requestor2}."
+    myDescription = myDescription.replace("..",".")
+    description.text = myDescription
     oagID = SubElement(dcterms, 'tslac:attyGeneral.orlIdentifier')
     oagID.text = identifierText
     oagID2 = SubElement(dcterms, 'tslac:attyGeneral.requestIdentifier')
@@ -230,16 +241,16 @@ for row in df.itertuples():
     attyGeneral = SubElement(dcterms, 'tslac:attyGeneral.attyGeneralName')
     attyGeneral.text = attyGen
     oagRequestor = SubElement(dcterms, 'tslac:attyGeneral.requestorPerson')
-    oagRequestor.text = valuables['Last Name'] + ", " + valuables['First Name']
+    oagRequestor.text = valuables['gb_name_last'] + ", " + valuables['gb_name_first']
     oagRequestorGov = SubElement(dcterms, "tslac:attyGeneral.requestorEntity")
     oagRequestorGov.text = str(valuables['gb_entity']).title()
-    if valuables['gb_entity'] != valuables['GB_Name']:
+    if valuables['gb_entity'] != valuables['GoverningBody']:
         oagEntity = SubElement(dcterms, 'tslac:attyGeneral.requestorEntityRep')
-        oagEntity.text = valuables['GB_Name'].title()
+        oagEntity.text = valuables['GoverningBody'].title()
     dateReceived = SubElement(dcterms, 'tslac:attyGeneral.dateReceived')
-    dateReceived.text = valuables['received_date'][:10]
+    dateReceived.text = valuables['dt_received'][:10]
     dateIssued = SubElement(dcterms, 'tslac:attyGeneral.dateIssued')
-    dateIssued.text = valuables['status_date'][:10]
+    dateIssued.text = valuables['dt_status'][:10]
     toSave = "or" + identifier1 + identifier2 + ".pdf.metadata"
     print(toSave)
     sorting = folder_name(toSave)
