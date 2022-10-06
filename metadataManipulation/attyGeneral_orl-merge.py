@@ -10,7 +10,7 @@ from preservation_utilities import preservation_utilities
 namespace_1 = {'xmlns': "http://dublincore.org/documents/dcmi-terms/",
                'tslac': "https://www.tsl.texas.gov/",
                'dcterms': "http://dublincore.org/documents/dcmi-terms/"}
-metadata_files = '/media/sf_Z_DRIVE/Working/OAG/working/presentation6/2002' #input("directory with correct metadata file: ")
+metadata_files = '/media/sf_Z_DRIVE/Working/OAG/working/presentation6/2007' #input("directory with correct metadata file: ")
 tag = 'dcterms:title' #input("tag content to pair on, including prefix: ")
 metadata_dict = {}
 for dirpath, dirnames, filenames in os.walk(metadata_files):
@@ -40,7 +40,7 @@ print(headers)
 #create a basic timer
 timer = time.time() + 600
 # user-defined parameters
-seriousFilepath = '/media/sf_F_DRIVE/Archives/Electronic_records/Texas_Digital_Archive/working_materials/newAPI/correcto_2002_ab' #input("XIP files directory without trailing /:")
+seriousFilepath = '/media/sf_F_DRIVE/Archives/Electronic_records/Texas_Digital_Archive/working_materials/newAPI/correcto_2007' #input("XIP files directory without trailing /:")
 
 # constants
 base_url = f'https://{prefix}.preservica.com/api/entity/'
