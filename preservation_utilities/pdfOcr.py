@@ -11,10 +11,11 @@ import time
 source = input("folder structure to process: ")
 for dirpath, dirnames, filenames in os.walk(source):
     for filename in filenames:
-        if filename.endswith(".pdf"):
-            target = os.path.join("./presentation2",dirpath,filename).replace("/./","/")
+        if filename.endswith(".pdf") and dirpath.endswith("preservation1"):
+            target = dirpath.replace(dirpath.split("/")[-1],"presentation2")
+            target = os.path.join(target,filename).replace("/./","/")
             filename1 = filename
-            filename  = os.path.join(dirpath, filename)
+            filename = os.path.join(dirpath, filename)
             if not os.path.exists(os.path.dirname(target)):
                 os.makedirs(os.path.dirname(target), exist_ok=True)
             try:

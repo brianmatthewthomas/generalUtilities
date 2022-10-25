@@ -97,13 +97,13 @@ def prettify(elem):
     return reparse.toprettyxml(indent="    ")
 
 #toSort = input("folder to sort:")
-toSort = "/media/sf_Z_DRIVE/Working/OAG/2022_066_20220803/2007"
+toSort = "/media/sf_Y_DRIVE/in-process/Attorney General/OpenRecordLetters/2007"
 #targetSort = input("where to put the sorted files: ")
-targetSort = "/media/sf_Z_DRIVE/Working/OAG/working/presentation6"
-'''for dirpath, dirnames, filenames in os.walk(toSort):
+targetSort = "/media/sf_Y_DRIVE/in-process/Attorney General/OpenRecordLetters/sorted"
+for dirpath, dirnames, filenames in os.walk(toSort):
     for filename in filenames:
         sorting = folder_name(filename)
-        sorting = targetSort + "/" + sorting + "/" + filename
+        sorting = targetSort + "/" + sorting + "/preservation1/" + filename
         folder_maker(sorting)
         filename = os.path.join(dirpath, filename)
         if not os.path.isfile(sorting):
@@ -112,6 +112,7 @@ targetSort = "/media/sf_Z_DRIVE/Working/OAG/working/presentation6"
             print("copied", filename, "to", sorting)
         else:
             print(filename, "already copied")
+
 '''
 #spreadsheet = input("input the spreadsheet name with filepath: ")
 spreadsheet = "/media/sf_Z_DRIVE/Working/OAG/2022_066_20220803/Metadata for TSLAC 1997-2003/ORD_ORLClosed_2007.xlsx"
@@ -259,5 +260,5 @@ for row in df.itertuples():
     metadata = open(sorting, "wt", encoding="utf-8")
     metadata.write(prettify(dcterms))
     metadata.close()
-
+'''
 print("all done")
