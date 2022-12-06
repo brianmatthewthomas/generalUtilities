@@ -496,6 +496,8 @@ while True:
     tenant = values['-TENANT-']
     metadata = values['-METADATA-']
     version = values['-PreservicaVersion-']
+    if not version.startswith("v"):
+        version = "v" + version
     location = values['-LOCATION-']
     error_log = values['-ERRORS-']
     uuid = values['-UUID-']

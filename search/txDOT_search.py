@@ -279,7 +279,9 @@ function dosearch() {
 	var collection = district_drop.options [district_drop.selectedIndex].value;
 	var collectible
 	if (collection != "") {
-        if (collection == "AUS") {
+	    if (collection == "AMA") {
+	        collectible = "&parenthierarchy=SO_31d1be12-eb74-489a-84c3-00163569afa7"
+        } else if (collection == "AUS") {
             collectible = "&parenthierarchy=SO_4ec205fa-8f6a-47c7-a960-20cf4ca18420"
         } else if (collection == "ELP") {
             collectible = "&parenthierarchy=SO_3a09afe5-6f25-407a-9a30-aae02cea1c0f"
@@ -291,6 +293,8 @@ function dosearch() {
             collectible = "&parenthierarchy=SO_0b3f3826-a42a-4650-aa47-d1eb54ee31e7"
         } else if (collection == "ODA") {
             collectible = "&parenthierarchy=SO_3c76b289-ceb0-4eee-811b-9f78ff067d83"
+        } else if (collection == "PHR") {
+            collectible = "&parenthierarchy=SO_eeb6f2c9-c261-4dfa-b657-741260358a63"
         } else if (collection == "SJT") {
             collectible = "&parenthierarchy=SO_4d31c886-a8af-48f6-94e2-13ff3902fb52"
         }
