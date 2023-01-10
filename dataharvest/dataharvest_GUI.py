@@ -84,7 +84,7 @@ def newDirpath(dirpath):
         return dirlevel2
 
 
-def harvest(valuables):
+def harvest(valuables, pair_list):
     url = f"https://{valuables['prefix']}.preservica.com/api/accesstoken/login"
     payload = {'username': valuables['username'], 'password': valuables['password'], 'tenant': valuables['tenant']}
     print("logging in...")
@@ -186,7 +186,7 @@ def harvest(valuables):
     for dirpath, dirnames, filenames in os.walk(dir_level):
         for filename in filenames:
             filename = os.path.join(dirpath, filename)
-            if "_children" in filename:
+            if "children" in filename:
                 try:
                     dom = ET.parse(filename)
                 except OSError:
@@ -341,7 +341,17 @@ def harvest(valuables):
                         if dublin_core not in my_list:
                             print(f"{uuid} missing dcterms, adding them")
                             purl2 = elemental + "/metadata"
-                            responsible = requests.post(purl2, headers=headers, data=open(metadata, 'rb'))
+                            metadata2 = metadata
+                            if len(pair_list) > 0:
+                                my_title = element.get("title")
+                                for xyz in pair_list:
+                                    metadata_file_name = xyz.split("/")[-1][:-9]
+                                    if "." in metadata_file_name:
+                                        ext_index = metadata_file_name.rfind(".")
+                                        metadata_file_name = metadata_file_name[:ext_index]
+                                    if my_title == metadata_file_name:
+                                        metadata2 = xyz
+                            responsible = requests.post(purl2, headers=headers, data=open(metadata2, 'rb'))
                             response = requests.get(elemental, headers=headers)
                             add_counter += 1
                             preservation_utilities.filemaker(new_file, response)
@@ -408,7 +418,8 @@ layout = [
         SG.Push(),
         SG.Text("Metadata file", visible=True, key="-METADATA_Text-"),
         SG.In("", size=(50, 1), visible=True, key="-METADATA-",
-              tooltip="absolute filepath for metadata file to insert if no DCMI metadata is present")
+              tooltip="absolute filepath for metadata file to insert if no DCMI metadata is present"),
+        SG.FileBrowse()
     ],
     [
         SG.Push(),
@@ -426,6 +437,17 @@ layout = [
         SG.Push(),
         SG.Text("UUID for top-level folder", visible=True, key="-UUID_Text-"),
         SG.Input("", size=(50, 1), visible=True, key='-UUID-')
+    ],
+    [
+      SG.Checkbox("pair with item-level metadata?", key="-PAIR-",
+                  tooltip="check to insert existing item-level unique metadata to items")
+    ],
+    [
+        SG.Push(),
+        SG.Text("Root metadata files location", visible=True, key="-PAIR_Text-"),
+        SG.In("", size=(50, 1), visible=True, key="-PAIR_FILES-",
+              tooltip="root folder for pairing metadata, files must end in .metadata"),
+        SG.FolderBrowse()
     ],
     [
         SG.Text("Login variables", text_color="orchid1", font=("Calibri", "12", "underline"))
@@ -496,6 +518,7 @@ while True:
     tenant = values['-TENANT-']
     metadata = values['-METADATA-']
     version = values['-PreservicaVersion-']
+    metadata_files = values['-PAIR_FILES-']
     if not version.startswith("v"):
         version = "v" + version
     location = values['-LOCATION-']
@@ -511,16 +534,30 @@ while True:
                  'uuid': uuid}
     url = f"https://{prefix}.preservica.com/api/accesstoken/login"
     payload = {'username': username, 'password': password, 'tenant': tenant}
+    pair_list = []
     if event == "Execute":
+        if values['-PAIR-'] is True:
+            window['-OUTPUT-'].update("\nGathering list of metadata files for pairing", append=True)
+            if metadata_files != "":
+                for dirpath, dirnames, filenames in os.walk(metadata_files):
+                    for filename in filenames:
+                        if filename.endswith(".metadata"):
+                            filename = os.path.join(dirpath, filename)
+                            pair_list.append(filename)
+                window['-OUTPUT-'].update("\nlist of metadata files generated", append=True)
+            else:
+                window['-OUTPUT-'].update("\nyou need to add the metadata files folder, exiting", append=True)
+                print("you need to add the metadata files folder, exiting")
+                sys.exit()
         if values['-HARVEST-'] is True:
             window['-OUTPUT-'].update("\ncheckbox works", append=True)
             window['-OUTPUT-'].update("\nstarting original harvest of files", append=True)
-            harvest(valuables)
+            harvest(valuables, pair_list=pair_list)
             window['-OUTPUT-'].update("\noriginal harvest of files finished, moving on to any other selected option",
                                       append=True)
         if values['-RERUN-'] is True:
             window['-OUTPUT-'].update("\nstarting second pass at harvesting files to catch missing items", append=True)
-            harvest(valuables)
+            harvest(valuables, pair_list=pair_list)
             window['-OUTPUT-'].update("\nsecond pass completed", append=True)
         if values['-ERROR_CATCHER-'] is True:
             window['-OUTPUT-'].update("\n starting error catching routine", append=True)
