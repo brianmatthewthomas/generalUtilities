@@ -2,7 +2,7 @@ import pandas as PD
 import os
 
 main_frame = PD.DataFrame()
-
+'''
 the_file = "/media/sf_F_DRIVE/Archives/Electronic_records/Texas_Digital_Archive/working_materials/newAPI/correcto/IO_000120375_dcfb0832-e02a-45b2-97dd-9c658cd50ff6_metadata-1.xml"
 
 df = PD.read_xml(the_file, xpath=".//dcterms:dcterms",
@@ -12,7 +12,7 @@ df['link'] = f"https://tsl.access.preservica.com/uncategorized/IO_{the_file.spli
 print(df)
 print(main_frame)
 main_frame = main_frame.append(df)
-print(main_frame)
+print(main_frame)'''
 writer = main_frame.to_excel("/media/sf_F_DRIVE/Archives/Electronic_records/Texas_Digital_Archive/working_materials/newAPI/correcto/trial.xlsx", index=False)
 
 # start crawl
@@ -28,4 +28,4 @@ for dirpath, dirnames, filenames in os.walk(to_crawl):
             df['link'] = f"https://tsl.access.preservica.com/uncategorized/IO_{filename.split('_')[-2]}/"
             #print(df)
             your_frame = your_frame.append(df)
-writer = your_frame.to_excel("/media/sf_F_DRIVE/Archives/Electronic_records/Texas_Digital_Archive/working_materials/newAPI/correcto/trial2.xlsx",index=False)
+writer = your_frame.to_excel("/media/sf_F_DRIVE/Archives/Electronic_records/Texas_Digital_Archive/working_materials/newAPI/txDOT/SJT_data.xlsx",index=False)

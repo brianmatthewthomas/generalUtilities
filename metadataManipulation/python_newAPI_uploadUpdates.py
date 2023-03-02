@@ -23,7 +23,7 @@ print(headers)
 #create a basic timer
 timer = time.time() + 600
 # user-defined parameters
-seriousFilepath = input("XIP files directory without trailing /:")
+seriousFilepath = "/media/sf_F_DRIVE/Archives/Electronic_records/Texas_Digital_Archive/working_materials/newAPI/correcto" #input("XIP files directory without trailing /:")
 
 # constants
 base_url = f'https://{prefix}.preservica.com/api/entity/'
@@ -86,7 +86,7 @@ for dirpath, dirnames, filenames in os.walk(seriousFilepath):
                     with open("../tempfile.txt", "w") as f:
                         f.write(filedata)
                         f.close()
-                response = requests.put(entityURL, headers=headers, data=filedata)
+                response = requests.put(entityURL, headers=headers, data=filedata.encode('utf-8'))
                 status = response.status_code
                 current = time.asctime()
                 # handle specific http error codes
