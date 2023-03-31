@@ -48,8 +48,9 @@ for dirpath, dirnames, filenames in os.walk(seriousFilepath):
         # use convention to dictate how to extract uuid
         # post file based on convention and extracted uuid
         filename2 = os.path.join(directory, filename)
-        if filename.startswith("SO_") and filename.endswith(".xml") and "metadata" not in filename and "children" not in filename:
+        if filename.endswith(".xml") and "metadata" not in filename and "children" not in filename:
             try:
+                filename1 = filename
                 filename = os.path.join(dirpath, filename)
                 print(filename)
                 log.write(filename + "\n")
@@ -66,20 +67,38 @@ for dirpath, dirnames, filenames in os.walk(seriousFilepath):
                     filedata = f.read()
                     xipRef = dom.find('.//xip:Ref', namespaces=namespaces).text
                     title = dom.find('.//xip:Title', namespaces=namespaces).text
-                    description = dom.find('.//xip:Description', namespaces=namespaces).text
+                    title2 = title
+                    if len(title) < 4:
+                        title2 = title.split("-")[1]
+                        while len(title2) < 2:
+                            title2 = "0" + title2
+                            title2 = title.split("-")[0] + "-" + title2
+                            print(title2)
+                    description = dom.find('.//xip:Description', namespaces=namespaces)
+                    entityURL = dom.find('.//EntityResponse:Self', namespaces=namespaces).text
+                    if description == None:
+                        description = ""
+                    else:
+                        description = description.text
+                    description = description.replace(title, title2)
+                    title = title2
                     securityTag = dom.find('.//xip:SecurityTag', namespaces=namespaces).text
                     parent = dom.find('.//xip:Parent', namespaces=namespaces).text
-                    filedata = f'<xip:StructuralObject xmlns:xip="{namespaces["xip"]}"><xip:Ref>{xipRef}</xip:Ref>' \
-                                f'<xip:Title>{title}</xip:Title><xip:Description>{description}</xip:Description>' \
-                                f'<xip:SecurityTag>{securityTag}</xip:SecurityTag><xip:Parent>{parent}</xip:Parent>' \
-                                f'</xip:StructuralObject>'
+                    if filename1.startswith("SO_"):
+                        filedata = f'<xip:StructuralObject xmlns:xip="{namespaces["xip"]}"><xip:Ref>{xipRef}</xip:Ref>' \
+                                   f'<xip:Title>{title}</xip:Title><xip:Description>{description}</xip:Description>' \
+                                   f'<xip:SecurityTag>{securityTag}</xip:SecurityTag><xip:Parent>{parent}' \
+                                   f'</xip:Parent></xip:StructuralObject>'
+                    if filename1.startswith("IO_"):
+                        filedata = f'<xip:InformationObject xmlns:xip="{namespaces["xip"]}"><xip:Ref>{xipRef}</xip:Ref>' \
+                                   f'<xip:Title>{title}</xip:Title><xip:Description>{description}</xip:Description>' \
+                                   f'<xip:SecurityTag>{securityTag}</xip:SecurityTag><xip:Parent>{parent}' \
+                                   f'</xip:Parent></xip:InformationObject>'
                     print(filedata)
+                    print(entityURL)
                     with open(f"{math}errors/tempfile.txt", "w") as f:
                         f.write(filedata)
                     f.close()
-            except:
-                sys.exit()
-                '''
                 response = requests.put(entityURL, headers=headers, data=filedata.encode('utf-8'))
                 status = response.status_code
                 current = time.asctime()
@@ -144,7 +163,7 @@ for dirpath, dirnames, filenames in os.walk(seriousFilepath):
         if timer <= time.time():
             print("time to log back in")
             headers = preservation_utilities.login(url, payload)
-            timer = time.time() + 600'''
+            timer = time.time() + 600
 print("potential errors:", failure)
 print("success count:", count)
 log.close()
