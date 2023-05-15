@@ -51,6 +51,12 @@ for dirpath, dirnames, filenames in os.walk(metadata):
                         version = "v6.3"
                     if "v6.4" in filedata:
                         version = "v6.4"
+                    if "v6.5" in filedata:
+                        version = "v6.5"
+                    if "v6.6" in filedata:
+                        version = "v6.6"
+                    if "v6.7" in filedata:
+                        version = "v6.7"
                     namespaces['MetadataResponse'] = f"http://preservica.com/EntityAPI/{version}"
                     namespaces['xip'] = f"http://preservica.com/XIP/{version}"
                     try:
