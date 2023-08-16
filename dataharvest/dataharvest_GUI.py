@@ -5,8 +5,8 @@ import time
 import csv
 import lxml.etree as ET
 import PySimpleGUI as SG
+import errno
 
-from preservation_utilities import preservation_utilities
 
 my_icon = b'iVBORw0KGgoAAAANSUhEUgAAAHgAAABsCAQAAAALKr7UAAAAAmJLR0QAAKqNIzIAAAAJcEhZcwAALEsAACxLAaU9lqkAAAAHdElNRQ' \
           b'fmAhQHBBtCNNv6AAANwUlEQVR42u2ca3hV5ZXHf0lObgRz4WK4WmpAEFFHFBTkMQWUoTyoiIpDrajcpGOFWsaOtCqgraIdO8pDp7VF' \
@@ -60,15 +60,14 @@ my_icon = b'iVBORw0KGgoAAAANSUhEUgAAAHgAAABsCAQAAAALKr7UAAAAAmJLR0QAAKqNIzIAAAAJ
           b'lnaHQsIHVzZSBmcmVlbHmnmvCCAAAAIXRFWHRpY2M6ZGVzY3JpcHRpb24Ac1JHQiBJRUM2MTk2Ni0yLjFXrdpHAAAAInRFWHRpY2M6' \
           b'bWFudWZhY3R1cmVyAHNSR0IgSUVDNjE5NjYtMi4xa5wU+QAAABt0RVh0aWNjOm1vZGVsAHNSR0IgSUVDNjE5NjYtMi4xhWT+PAAAAA' \
           b'BJRU5ErkJggg=='
-
-
-def login(login_url, login_payload):
-    auth = requests.post(login_url, data=login_payload).json()
-    session_token = auth['token']
-    login_headers = {'Preservica-Access-Token': session_token, 'Content-Type': 'application/xml',
-                     'Accept-Charset': 'UTF-8'}
-    return login_headers
-
+def login(url, payload):
+    # this will log into the preservica API and get an access token
+    auth = requests.post(url, data=payload).json()
+    sessionToken = auth["token"]
+    headers = {'Preservica-Access-Token': sessionToken}
+    headers['Content-Type'] = 'application/xml'
+    headers['Accept-Charset'] = 'UTF-8'
+    return headers
 def getNamespaces(root):
     namespaces = root.nsmap
     namespaces['xmlns'] = namespaces[None]
@@ -78,8 +77,21 @@ def getNamespaces(root):
     namespaces['MetadataResponse'] = namespaces['xmlns']
     namespaces['EntityResponse'] = namespaces['xmlns']
     namespaces['ChildrenResponse'] = namespaces['xmlns']
-    print(namespaces)
     return namespaces
+
+def dirMaker(filename):
+    if not os.path.exists(os.path.dirname(filename)):
+        try:
+            os.makedirs(os.path.dirname(filename), exist_ok=True)
+        except OSError as exc:
+            if exc.errno != errno.EEXIST:
+                raise
+
+def filemaker(filename, response):
+    with open(filename, "wb") as md:
+        for chunk in response.iter_content(chunk_size=128):
+            md.write(chunk)
+    md.close()
 
 def newDirpath(dirpath):
     dirpath = str(dirpath)
@@ -98,13 +110,12 @@ def newDirpath(dirpath):
 def harvest(valuables, pair_list):
     url = f"https://{valuables['prefix']}.preservica.com/api/accesstoken/login"
     payload = {'username': valuables['username'], 'password': valuables['password'], 'tenant': valuables['tenant']}
-    print("logging in...")
     window['-OUTPUT-'].update("\nlogging in", append=True)
-    headers = preservation_utilities.login(url, payload)
-    print(headers)
+    headers = login(url, payload)
+    window['-OUTPUT-'].update(f"\n{headers}", append=True)
     timer = time.time() + 600
     base_station = valuables['location']
-    preservation_utilities.dirMaker(f"{base_station}/something.txt")
+    dirMaker(f"{base_station}/something.txt")
     logger = open(f"{base_station}/log_UUID-potential_fails.txt", "a")
     logger2 = open(f"{base_station}/log_UUID-MD-addedTo.txt", "a")
     level = 1
@@ -121,19 +132,19 @@ def harvest(valuables, pair_list):
     level += 1
     dir_level = dir_level + "level" + str(level) + "/"
     children_of_the_object = dir_level + "SO_" + uuid + "_children.xml"
-    preservation_utilities.dirMaker(filename)
-    preservation_utilities.dirMaker(children_of_the_object)
-    preservation_utilities.filemaker(filename, response)
+    dirMaker(filename)
+    dirMaker(children_of_the_object)
+    filemaker(filename, response)
     response = requests.get(jump_point + "/children?start=0&max=1000", headers=headers)
     status = response.status_code
     if status == 401:
-        print(children_of_the_object, "may have failed, logging back in")
+        window['-OUTPUT-'].update(f"\n{children_of_the_object} may have failed, logging back in", append=True)
         logger.write(children_of_the_object + "\n")
-        headers = preservation_utilities.login(url, payload)
+        headers = login(url, payload)
         response = requests.get(jump_point + "/children?start=0&max=1000", headers=headers)
-        preservation_utilities.filemaker(children_of_the_object, response)
+        filemaker(children_of_the_object, response)
     else:
-        preservation_utilities.filemaker(children_of_the_object, response)
+        filemaker(children_of_the_object, response)
     dom3 = ET.parse(children_of_the_object)
     root3 = dom3.getroot()
     namespaces = getNamespaces(root3)
@@ -147,15 +158,15 @@ def harvest(valuables, pair_list):
             while children_start <= hits:
                 child_file = os.path.join(dir_level, "SO_" + uuid + "_" + str(children_start) + "_children.xml")
                 response = requests.get(root_child + str(children_start) + max_child, headers=headers)
-                preservation_utilities.filemaker(child_file, response)
+                filemaker(child_file, response)
                 children_start = children_start + 1000
     dir_level2 = dir_level
-    print("making recursive structure")
+    window['-OUTPUT-'].update(f"\nmaking recursive structure", append=True)
     while level != 21:
         level += 1
         dir_level2 = dir_level2 + "level" + str(level) + "/"
         dummy = os.path.join(dir_level2, "filename.txt")
-        preservation_utilities.dirMaker(dummy)
+        dirMaker(dummy)
     dom = ET.parse(filename)
     root = dom.getroot()
     namespaces = getNamespaces(root)
@@ -172,7 +183,7 @@ def harvest(valuables, pair_list):
         responsible = requests.post(purl2, headers=headers, data=open(metadata, 'rb'))
         response = requests.get(jump_point, headers=headers)
         add_counter += 1
-        preservation_utilities.filemaker(filename, response)
+        filemaker(filename, response)
         dom = ET.parse(filename)
         root = dom.getroot()
         namespaces = getNamespaces(root)
@@ -183,17 +194,17 @@ def harvest(valuables, pair_list):
             elemental = element.text
             element_counter += 1
             response = requests.get(elemental, headers=headers)
-            preservation_utilities.filemaker(filename[:-4] + "_metadata-" + str(element_counter) + ".xml", response)
+            filemaker(filename[:-4] + "_metadata-" + str(element_counter) + ".xml", response)
         except:
             continue
     list_of_files = []
     list_of_existing_files = []
-    print("getting list of existing files")
+    window['-OUTPUT-'].update(f"\ngetting list of existing files", append=True)
     for dirpath, dirnames, filenames in os.walk(dir_level):
         for filename in filenames:
             filename = os.path.join(dirpath, filename)
             list_of_existing_files.append(filename)
-    print("list generation complete")
+    window['-OUTPUT-'].update(f"\nlist generation complete", append=True)
     for dirpath, dirnames, filenames in os.walk(dir_level):
         for filename in filenames:
             filename = os.path.join(dirpath, filename)
@@ -201,7 +212,7 @@ def harvest(valuables, pair_list):
                 try:
                     dom = ET.parse(filename)
                 except OSError:
-                    print("trouble reading", filename, ",", add_counter, "files had dcterms added to them")
+                    window['-OUTPUT-'].update(f"\ntrouble reading {filename}, {add_counter} files had dcterms added to them", append=True)
                     sys.exit()
                 root = dom.getroot()
                 namespaces = getNamespaces(root)
@@ -225,13 +236,13 @@ def harvest(valuables, pair_list):
                             response = requests.get(elemental, headers=headers)
                             status = response.status_code
                             if status == 401:
-                                print(new_file, "may have failed, logging back in")
+                                window['-OUTPUT-'].update(f"\n{new_file} may have failed, logging back in", append=True)
                                 logger.write(new_file + "\n")
-                                headers = preservation_utilities.login(url, payload)
+                                headers = login(url, payload)
                                 response = requests.get(elemental, headers=headers)
-                                preservation_utilities.filemaker(new_file, response)
+                                filemaker(new_file, response)
                             else:
-                                preservation_utilities.filemaker(new_file, response)
+                                filemaker(new_file, response)
                         dom2 = ET.parse(new_file)
                         root2 = dom2.getroot()
                         namespaces = getNamespaces(root2)
@@ -241,14 +252,14 @@ def harvest(valuables, pair_list):
                         for thing in things:
                             dc_type = thing.get('schema')
                             my_list.append(dc_type)
-                        print(my_list)
+                        window['-OUTPUT-'].update(f"\n{my_list}", append=True)
                         if dublin_core not in my_list:
-                            print(uuid, "missing dcterms, adding them")
+                            window['-OUTPUT-'].update(f"\n{uuid} missing dcterms, adding them", append=True)
                             purl2 = elemental + "/metadata"
                             responsible = requests.post(purl2, headers=headers, data=open(metadata, 'rb'))
                             response = requests.get(elemental, headers=headers)
                             add_counter += 1
-                            preservation_utilities.filemaker(new_file, response)
+                            filemaker(new_file, response)
                             logger2.write(elemental + "\n")
                         dom2 = ET.parse(new_file)
                         root2 = dom2.getroot()
@@ -268,31 +279,31 @@ def harvest(valuables, pair_list):
                                     response = requests.get(elementals, headers=headers)
                                     status = response.status_code
                                     if status == 401:
-                                        print(f"{another_new_file} may have failed, logging back in")
+                                        window['-OUTPUT-'].update(f"\n{another_new_file} may have failed, logging back in", append=True)
                                         logger.write(another_new_file + "\n")
-                                        headers = preservation_utilities.login(url, payload)
+                                        headers = login(url, payload)
                                         response = requests.get(elementals, headers=headers)
-                                        preservation_utilities.filemaker(another_new_file, response)
+                                        filemaker(another_new_file, response)
                                     else:
-                                        preservation_utilities.filemaker(another_new_file, response)
+                                        filemaker(another_new_file, response)
                             except:
-                                print(f"exception happened around {new_file} or {another_new_file}")
+                                window['-OUTPUT-'].update(f"\nexception happened around {new_file} or {another_new_file}", append=True)
                         dir_level2 = newDirpath(dirpath)
                         child_file = os.path.join(dirpath, "level" + str(dir_level2), types + "_" +
                                                   uuid + "_children.xml")
                         list_of_files.append(child_file)
                         if child_file not in list_of_existing_files:
-                            preservation_utilities.dirMaker(child_file)
+                            dirMaker(child_file)
                             response = requests.get(elemental + "/children?start=0&max=1000", headers=headers)
                             status = response.status_code
                             if status == 401:
-                                print(f"{child_file} may have failed, logging back in")
+                                window['-OUTPUT-'].update("\n{child_file} may have failed, logging back in", append=True)
                                 logger.write(child_file + "\n")
-                                headers = preservation_utilities.login(url, payload)
+                                headers = login(url, payload)
                                 response = requests.get(elemental + "/children?start=0&max+1000", headers=headers)
-                                preservation_utilities.filemaker(child_file, response)
+                                filemaker(child_file, response)
                             else:
-                                preservation_utilities.filemaker(child_file, response)
+                                filemaker(child_file, response)
                         dom3 = ET.parse(child_file)
                         root3 = dom3.getroot()
                         namespaces = getNamespaces(root3)
@@ -311,17 +322,17 @@ def harvest(valuables, pair_list):
                                                             headers=headers)
                                     status = response.status_code
                                     if status == 401:
-                                        print(f"{child_file} may have failed, logging back in")
+                                        window['-OUTPUT-'].update(f"\n{child_file} may have failed, logging back in", append=True)
                                         logger.write(child_file + "\n")
-                                        headers = preservation_utilities.login(url, payload)
+                                        headers = login(url, payload)
                                         response = requests.get(root_child + str(children_start) + max_child,
                                                                 headers=headers)
-                                        preservation_utilities.filemaker(child_file, response)
+                                        filemaker(child_file, response)
                                     else:
-                                        preservation_utilities.filemaker(child_file, response)
+                                        filemaker(child_file, response)
                                         children_start += 1000
                     except:
-                        print(f"exception happened near {filename}")
+                        window['-OUTPUT-'].update(f"\nexception happened near {filename}", append=True)
                 elements = root.xpath(".//ChildrenResponse:Child[@type='IO']", namespaces=namespaces)
                 status = len(elements)
                 counter = 0
@@ -342,13 +353,13 @@ def harvest(valuables, pair_list):
                             response = requests.get(elemental, headers=headers)
                             status = response.status_code
                             if status == 401:
-                                print(f"{new_file} may have failed, logging back in")
+                                window['-OUTPUT-'].update(f"\n{new_file} may have failed, logging back in", append=True)
                                 logger.write(new_file + "\n")
-                                headers = preservation_utilities.login(url, payload)
+                                headers = login(url, payload)
                                 response = requests.get(elemental, headers=headers)
-                                preservation_utilities.filemaker(new_file, response)
+                                filemaker(new_file, response)
                             else:
-                                preservation_utilities.filemaker(new_file, response)
+                                filemaker(new_file, response)
                         dom2 = ET.parse(new_file)
                         root2 = dom2.getroot()
                         namespaces = getNamespaces(root2)
@@ -358,9 +369,9 @@ def harvest(valuables, pair_list):
                         for thing in things:
                             dc_type = thing.get('schema')
                             my_list.append(dc_type)
-                        print(my_list)
+                        window['-OUTPUT-'].update(f"\n{my_list}", append=True)
                         if dublin_core not in my_list:
-                            print(f"{uuid} missing dcterms, adding them")
+                            window['-OUTPUT-'].update(f"\n{uuid} missing dcterms, adding them", append=True)
                             purl2 = elemental + "/metadata"
                             metadata2 = metadata
                             if len(pair_list) > 0:
@@ -375,7 +386,7 @@ def harvest(valuables, pair_list):
                             responsible = requests.post(purl2, headers=headers, data=open(metadata2, 'rb'))
                             response = requests.get(elemental, headers=headers)
                             add_counter += 1
-                            preservation_utilities.filemaker(new_file, response)
+                            filemaker(new_file, response)
                             logger2.write(elemental + "\n")
                         dom2 = ET.parse(new_file)
                         root2 = dom2.getroot()
@@ -395,21 +406,21 @@ def harvest(valuables, pair_list):
                                     response = requests.get(elementals, headers=headers)
                                     status = response.status_code
                                     if status == 401:
-                                        print(f"{another_new_file} may have failed, logging back in")
+                                        window['-OUTPUT-'].update(f"\n{another_new_file} may have failed, logging back in", append=True)
                                         logger.write(another_new_file + "\n")
-                                        headers = preservation_utilities.login(url, payload)
+                                        headers = login(url, payload)
                                         response = requests.get(elementals, headers=headers)
-                                        preservation_utilities.filemaker(another_new_file, response)
+                                        filemaker(another_new_file, response)
                                     else:
-                                        preservation_utilities.filemaker(another_new_file, response)
+                                        filemaker(another_new_file, response)
                             except:
-                                print(f"exception happened for some weird reason around {new_file} ")
+                                window['-OUTPUT-'].update(f"\nexception happened for some weird reason around {new_file}", append=True)
                         if timer <= time.time():
-                            print("time to log back in")
-                            headers = preservation_utilities.login(url, payload)
+                            window['-OUTPUT-'].update(f"\ntime to log back in", append=True)
+                            headers = login(url, payload)
                             timer = time.time() + 600
                     except:
-                        print(f"exception happened for some weird reason")
+                        window['-OUTPUT-'].update(f"\nexception happened for some weird reason", append=True)
     logger.close()
     logger2.close()
 
@@ -561,7 +572,6 @@ while True:
                 window['-OUTPUT-'].update("\nlist of metadata files generated", append=True)
             else:
                 window['-OUTPUT-'].update("\nyou need to add the metadata files folder, exiting", append=True)
-                print("you need to add the metadata files folder, exiting")
                 sys.exit()
         if values['-HARVEST-'] is True:
             window['-OUTPUT-'].update("\ncheckbox works", append=True)
@@ -588,12 +598,12 @@ while True:
                         filename = os.path.join(dirpath, filename)
                         if dir != dirpath:
                             current = time.asctime()
-                            print(f"checking {dirpath} starting at {current}")
+                            window['-OUTPUT-'].update(f"\nchecking {dirpath} starting at {current}", append=True)
                             dir = dirpath
                         with open(filename, "r") as f:
                             filedata = f.read()
                             if "xip" not in filedata:
-                                print(f"error in {filename}")
+                                window['-OUTPUT-'].update(f"\nerror in {filename}", append=True)
                                 if "IO_" in filename:
                                     my_type = "IO"
                                     core = "information-objects/"
@@ -614,14 +624,14 @@ while True:
                                     uuid = filename[-40:-4]
                                 log.write(f"https://{prefix}.preservica.com/api/entity/{core}{uuid},{directory},"
                                           f"{xip_file},{type}\n")
-            print("all done with error checking")
-            print("don't forget to modify errors.csv to be in the format needed for patch harvesting")
+            window['-OUTPUT-'].update(f"\nall done with error checking", append=True)
+            window['-OUTPUT-'].update(f"\ndon't forget to modify errors.csv to be in the format needed for patch harvesting", append=True)
             log.close()
             window['-OUTPUT-'].update("\nerror catcher routine complete", append=True)
         if values['-PATCH-'] is True:
-            print("patch option was selected")
-            window['-OUTPUT-'].update("\nRunning patch harvest for anything missing", append=True)
-            headers = preservation_utilities.login(url, payload)
+            window['-OUTPUT-'].update(f"\npatch option was selected", append=True)
+            window['-OUTPUT-'].update(f"\nRunning patch harvest for anything missing", append=True)
+            headers = login(url, payload)
             timer = time.time() + 600
             logger = open(f"{location}/log_potential_fails_patch.txt", "a")
             base_url = f"https://{prefix}.preservica.com/api/entity/"
@@ -636,12 +646,12 @@ while True:
                         temp = "_" + xip_file.split("_")[-1]
                         xip_file = xip_file.replace(temp, ".xml")
                     new_file = f"{directory}/{xip_file}"
-                    print(new_file)
-                    preservation_utilities.dirMaker(new_file)
+                    window['-OUTPUT-'].update(f"\n{new_file}", append=True)
+                    dirMaker(new_file)
                     response = requests.get(uuid_url, headers=headers)
                     status = response.status_code
                     if status == 401:
-                        print(f"{new_file} may have failed, logging back in")
+                        window['-OUTPUT-'].update(f"\n{new_file} may have failed, logging back in", append=True)
                         logger.write(new_file + "\n")
                 except:
                     continue
