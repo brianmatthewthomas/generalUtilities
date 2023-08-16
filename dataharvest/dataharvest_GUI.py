@@ -69,6 +69,17 @@ def login(login_url, login_payload):
                      'Accept-Charset': 'UTF-8'}
     return login_headers
 
+def getNamespaces(root):
+    namespaces = root.nsmap
+    namespaces['xmlns'] = namespaces[None]
+    namespaces.pop(None, None)
+    namespaces['dcterms'] = "http://dublincore.org/documents/dcmi-terms/"
+    namespaces['tslac'] = 'https://www.tsl.texas.gov/'
+    namespaces['MetadataResponse'] = namespaces['xmlns']
+    namespaces['EntityResponse'] = namespaces['xmlns']
+    namespaces['ChildrenResponse'] = namespaces['xmlns']
+    print(namespaces)
+    return namespaces
 
 def newDirpath(dirpath):
     dirpath = str(dirpath)
@@ -91,7 +102,6 @@ def harvest(valuables, pair_list):
     window['-OUTPUT-'].update("\nlogging in", append=True)
     headers = preservation_utilities.login(url, payload)
     print(headers)
-    version = valuables['version']
     timer = time.time() + 600
     base_station = valuables['location']
     preservation_utilities.dirMaker(f"{base_station}/something.txt")
@@ -102,9 +112,6 @@ def harvest(valuables, pair_list):
     base_url = f"https://{valuables['prefix']}.preservica.com/api/entity/"
     so = "structural-objects/"
     dublin_core = "http://dublincore.org/documents/dcmi-terms/"
-    namespaces = {'xip': f"http://preservica.com/XIP/{version}",
-                  'EntityResponse': f"http://preservica.com/EntityAPI/{version}",
-                  'ChildrenResponse': f"http://preservica.com/EntityAPI/{version}"}
     metadata = valuables['metadata_file']
     uuid = valuables['uuid']
     jump_point = base_url + so + uuid
@@ -129,6 +136,7 @@ def harvest(valuables, pair_list):
         preservation_utilities.filemaker(children_of_the_object, response)
     dom3 = ET.parse(children_of_the_object)
     root3 = dom3.getroot()
+    namespaces = getNamespaces(root3)
     things = root3.xpath('.//ChildrenResponse:TotalResults', namespaces=namespaces)
     for thing in things:
         hits = int(thing.text)
@@ -150,6 +158,8 @@ def harvest(valuables, pair_list):
         preservation_utilities.dirMaker(dummy)
     dom = ET.parse(filename)
     root = dom.getroot()
+    namespaces = getNamespaces(root)
+    version = namespaces['xmlns'].split("/")[-1]
     elements = root.xpath(f'.//EntityResponse:Fragment[not((@schema="http://preservica.com/LegacyXIP") or '
                           f'(@schema="http://preservica.com/ExtendidXIP/{version}"))]', namespaces=namespaces)
     element_counter = 0
@@ -165,6 +175,7 @@ def harvest(valuables, pair_list):
         preservation_utilities.filemaker(filename, response)
         dom = ET.parse(filename)
         root = dom.getroot()
+        namespaces = getNamespaces(root)
         elements = root.xpath(f'.//EntityResponse:Fragment[not((@schema="http://preservica.com/LegacyXIP") or '
                               f'(@schema="http://preservica.com/ExtendedXIP/{version}"))]', namespaces=namespaces)
     for element in elements:
@@ -192,6 +203,8 @@ def harvest(valuables, pair_list):
                 except OSError:
                     print("trouble reading", filename, ",", add_counter, "files had dcterms added to them")
                     sys.exit()
+                root = dom.getroot()
+                namespaces = getNamespaces(root)
                 name = dom.find(".//ChildrenResponse:Self", namespaces=namespaces).text
                 name = name.split("/")[-2]
                 window['-OUTPUT-'].update(f"\nworking on {name}")
@@ -221,6 +234,8 @@ def harvest(valuables, pair_list):
                                 preservation_utilities.filemaker(new_file, response)
                         dom2 = ET.parse(new_file)
                         root2 = dom2.getroot()
+                        namespaces = getNamespaces(root2)
+                        version = namespaces['xmlns'].split("/")[-1]
                         things = root2.xpath('.//EntityResponse:Fragment', namespaces=namespaces)
                         my_list = []
                         for thing in things:
@@ -237,6 +252,8 @@ def harvest(valuables, pair_list):
                             logger2.write(elemental + "\n")
                         dom2 = ET.parse(new_file)
                         root2 = dom2.getroot()
+                        namespaces = getNamespaces(root2)
+                        version = namespaces['xmlns'].split("/")[-1]
                         things = root2.xpath(f'.//EntityResponse:Fragment[not((@schema="http://preservica.com/'
                                              f'LegacyXIP") or (@schema="http://preservica.com/ExtendedXIP/'
                                              f'{version}"))]', namespaces=namespaces)
@@ -278,6 +295,8 @@ def harvest(valuables, pair_list):
                                 preservation_utilities.filemaker(child_file, response)
                         dom3 = ET.parse(child_file)
                         root3 = dom3.getroot()
+                        namespaces = getNamespaces(root3)
+                        version = namespaces['xmlns'].split("/")[-1]
                         things = root3.xpath('.//ChildrenResponse:TotalResults', namespaces=namespaces)
                         for thing in things:
                             hits = int(thing.text)
@@ -332,6 +351,8 @@ def harvest(valuables, pair_list):
                                 preservation_utilities.filemaker(new_file, response)
                         dom2 = ET.parse(new_file)
                         root2 = dom2.getroot()
+                        namespaces = getNamespaces(root2)
+                        version = namespaces['xmlns'].split("/")[-1]
                         things = root2.xpath('.//EntityResponse:Fragment', namespaces=namespaces)
                         my_list = []
                         for thing in things:
@@ -358,6 +379,8 @@ def harvest(valuables, pair_list):
                             logger2.write(elemental + "\n")
                         dom2 = ET.parse(new_file)
                         root2 = dom2.getroot()
+                        namespaces = getNamespaces(root2)
+                        version = namespaces['xmlns'].split("/")[-1]
                         things = root2.xpath(f'.//EntityResponse:Fragment[not((@schema="http://preservica.com/'
                                              f'LegacyXIP") or (@schema="http://preservica.com/ExtendedXIP/'
                                              f'{version}"))]', namespaces=namespaces)
@@ -427,11 +450,6 @@ layout = [
         SG.In("", size=(50, 1), visible=True, key="-ERRORS-",
               tooltip="specific file must be a csv"),
         SG.FileBrowse()
-    ],
-    [
-        SG.Push(),
-        SG.Text("Preservica Version:", key="-PreservicaVersion_TEXT-"),
-        SG.Input("", size=(50, 1), key="-PreservicaVersion-")
     ],
     [
         SG.Push(),
@@ -517,10 +535,7 @@ while True:
     prefix = values['-PREFIX-']
     tenant = values['-TENANT-']
     metadata = values['-METADATA-']
-    version = values['-PreservicaVersion-']
     metadata_files = values['-PAIR_FILES-']
-    if not version.startswith("v"):
-        version = "v" + version
     location = values['-LOCATION-']
     error_log = values['-ERRORS-']
     uuid = values['-UUID-']
@@ -528,7 +543,6 @@ while True:
                  'password': password,
                  'tenant': tenant,
                  'prefix': prefix,
-                 'version': version,
                  'location': location,
                  'metadata_file': metadata,
                  'uuid': uuid}
