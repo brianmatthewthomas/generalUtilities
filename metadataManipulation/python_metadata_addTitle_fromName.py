@@ -3,6 +3,17 @@ import shutil
 import lxml.etree as ET
 from preservation_utilities import preservation_utilities
 
+def getNamespaces(root):
+    namespaces = root.nsmap
+    namespaces['xmlns'] = namespaces[None]
+    namespaces.pop(None, None)
+    namespaces['dcterms'] = "http://dublincore.org/documents/dcmi-terms/"
+    namespaces['tslac'] = 'https://www.tsl.texas.gov/'
+    namespaces['MetadataResponse'] = namespaces['xmlns']
+    namespaces['EntityResponse'] = namespaces['xmlns']
+    namespaces['ChildrenResponse'] = namespaces['xmlns']
+    return namespaces
+
 print("this will add a dcterms:title tag to a file")
 print("this is based on the item name in the regular file") 
 print("so if that isn't what you want don't run this script")
@@ -25,14 +36,7 @@ for dirpath, dirnames, filenames in os.walk(walker):
 					dom = ET.parse(file2)
 					#construct the namespaces for later on
 					root = dom.getroot()
-					namespaces = root.nsmap
-					namespaces['xmlns'] = namespaces[None]
-					namespaces.pop(None,None)
-					namespaces['dcterms'] = "http://dublincore.org/documents/dcmi-terms/"
-					namespaces['tslac'] = 'https://www.tsl.texas.gov/'
-					namespaces['MetadataResponse'] = namespaces['xmlns']
-					namespaces['EntityResponse'] = namespaces['xmlns']
-					namespaces['ChildrenResponse'] = namespaces['xmlns']
+					namespaces = getNamespaces(root)
 					title = dom.find(".//xip:Title", namespaces=namespaces).text
 					if len(title) < 9:
 						title2 = title

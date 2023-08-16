@@ -9,6 +9,17 @@ import lxml.etree as ET
 from openpyxl import Workbook
 import time
 
+def getNamespaces(root):
+    namespaces = root.nsmap
+    namespaces['xmlns'] = namespaces[None]
+    namespaces.pop(None, None)
+    namespaces['dcterms'] = "http://dublincore.org/documents/dcmi-terms/"
+    namespaces['tslac'] = 'https://www.tsl.texas.gov/'
+    namespaces['MetadataResponse'] = namespaces['xmlns']
+    namespaces['EntityResponse'] = namespaces['xmlns']
+    namespaces['ChildrenResponse'] = namespaces['xmlns']
+    return namespaces
+
 #remind user what they need to do before proceeding
 print("If you do not pay attention to the above everything will go wrong and I will slap you with a fish")
 
@@ -54,26 +65,15 @@ for dirpath, dirnames, filenames in os.walk(seriousFilepath):
 				with open(filename, "r") as f:
 					filedata = f.read()
 					if "<xip:Title>" in filedata:
-						if "/v6.6" in filedata:
-							version = "6.6"
-						if "/v6.5" in filedata:
-							version = "6.5"
-						if "/v6.4" in filedata:
-							version = "6.4"
-						if "/v6.3" in filedata:
-							version = "6.3"
-						if "/v6.2" in filedata:
-							version = "6.2"
-						if "/v6.1" in filedata:
-							version = "6.1"
-						nsmap = {'xip': f'http://preservica.com/XIP/v{version}',
-								 'dcterms': 'http://dublincore.org/documents/dcmi-terms/',
-								 'tslac': 'https://www.tsl.texas.gov/'}
+						dom = ET.parse(filename)
+						# construct the namespaces for later on
+						root = dom.getroot()
+						namespaces = getNamespaces(root)
 						try:
 							tree = ET.parse(filename)
 							root = tree.getroot()
-							title = root.find(".//xip:Title", namespaces=nsmap).text
-							uuid = root.find(".//xip:Ref", namespaces=nsmap).text
+							title = root.find(".//xip:Title", namespaces=namespaces).text
+							uuid = root.find(".//xip:Ref", namespaces=namespaces).text
 							ws.append([uuid,title])
 							processed = processed + 1
 						except:

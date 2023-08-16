@@ -1,21 +1,2 @@
-<dcterms:dcterms xsi:schemaLocation="http://dublincore.org/documents/dcmi-terms/ qualifiedDcSchema.xsd" xmlns="http://dublincore.org/documents/dcmi-terms/" xmlns:tslac="https://www.tsl.texas.gov/" xmlns:dcterms="http://dublincore.org/documents/dcmi-terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-	<creator>Texas Attorney General Open Records Division</creator>
-	<relation.isPartOf>Texas Attorney General Open Records Letter Rulings</relation.isPartOf>
-	<tslac:note>Optical character recognition of these files was completed using automated tools and have not been reviewed for accuracy.</tslac:note>
-	<date.created>1998-01-21</date.created>
-	<title>Open Records Letter Ruling 1998-00195</title>
-	<identifier.bibliographicCitation>Open Records Letter Ruling 1998-00195, Texas Attorney General Open Records Letter Rulings, Texas Attorney General's records. Archives and Information Services Division, Texas State Library and Archives Commission.</identifier.bibliographicCitation>
-	<tslac:keyword>Calabrese, Tracy B.</tslac:keyword>
-	<tslac:keyword>Tracy B. Calabrese</tslac:keyword>
-	<tslac:keyword>City of Houston</tslac:keyword>
-	<tslac:keyword>Attorney General Dan Morales</tslac:keyword>
-	<subject>Texas. Attorney-General's Office</subject>
-	<coverage.spatial>Houston (Tex.)</coverage.spatial>
-	<description.abstract>Open Records Letter Ruling 1998-00195 dated 1998-01-21, responding to a decision request from Tracy B. Calabrese on behalf of City of Houston.</description.abstract>
-	<tslac:attyGeneral.orlIdentifier>1998-00195</tslac:attyGeneral.orlIdentifier>
-	<tslac:attyGeneral.attyGeneralName>Attorney General Dan Morales</tslac:attyGeneral.attyGeneralName>
-	<tslac:attyGeneral.requestorPerson>Calabrese, Tracy B.</tslac:attyGeneral.requestorPerson>
-	<tslac:attyGeneral.requestorEntity>Houston, City of</tslac:attyGeneral.requestorEntity>
-	<tslac:attyGeneral.requestorEntityRep>Tracy B. Calabrese</tslac:attyGeneral.requestorEntityRep>
-	<tslac:attyGeneral.dateIssued>1998-01-21</tslac:attyGeneral.dateIssued>
+<dcterms:dcterms xsi:schemaLocation="http://dublincore.org/documents/dcmi-terms/ qualifiedDcSchema.xsd" xmlns="http://dublincore.org/documents/dcmi-terms/" xmlns:opex="http://www.openpreservationexchange.org/opex/v1.2" xmlns:tslac="https://www.tsl.texas.gov/" xmlns:dcterms="http://dublincore.org/documents/dcmi-terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><title>2022-12-01: tweet id 1598376383528415233</title><description.abstract>Tweet text: #TBT from the State Archives: #OTD in 1851, a ship carrying the first group of Czech immigrants to settle in Texas departed Liverpool, England. Of the 295 aboard, 74 were from northeastern Bohemia. Czech communities developed throughout Central Texas in the 19th &amp;amp; 20th centuries. https://t.co/Gfbo0smmzp</description.abstract><relation.isPartOf>Texas State Library and Archives Commission public relations social media records</relation.isPartOf><identifier.bibliographicCitation>2022-12-01: tweet id 1598376383528415233, @TSLAC, Twitter, Texas State Library and Archives Commission public relations social media records. Archives and Information Services Division, Texas State Library and Archives Commission.</identifier.bibliographicCitation><type>Text</type><creator>Texas State Library and Archives Commission</creator><date.created>2022-12-01</date.created><subject>Social media</subject><subject>Twitter</subject><tslac:socialmedia.platform>Twitter</tslac:socialmedia.platform><tslac:socialmedia.username>TSLAC</tslac:socialmedia.username><tslac:socialmedia.identifier>1598376383528415233</tslac:socialmedia.identifier><tslac:socialmedia.hashtag>TBT</tslac:socialmedia.hashtag><tslac:socialmedia.hashtag>OTD</tslac:socialmedia.hashtag>
 </dcterms:dcterms>

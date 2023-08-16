@@ -71,6 +71,8 @@ for dirpath, dirnames, filenames in os.walk(metadata):
                 filedata = r.read()
                 if "dcterms" in filedata:
                     print("processing", filename)
+                    if "EntityAPI/v6.9" in filedata:
+                        version = "v6.9"
                     if "EntityAPI/v6.8" in filedata:
                         version = "v6.8"
                     if "EntityAPI/v6.7" in filedata:
