@@ -34,6 +34,8 @@ def prettyify(elem):
     return reparse.toprettyxml(indent="    ")
 
 def transform_metadata(filename):
+    keyword_exceptions = ['newspapers', 'Newspapers']
+    subject_exceptions = ['newspapers', 'Newspapers']
     nsmap = {'metadata': ""}
     dom = ET.parse(filename)
     root = dom.getroot()
@@ -46,6 +48,10 @@ def transform_metadata(filename):
     creator_name = root.find(".//metadata:creator[@qualifier = 'edt']/metadata:name", namespaces=nsmap)
     if creator_name is not None:
         creator = creator_name.text
+    proprietor = ""
+    proprietor_name = root.find(".//metadata:contributor[@qualifier = 'ptr']/metadata:name", namespaces=nsmap)
+    if proprietor_name is not None:
+        proprietor = proprietor_name.text
     publisher = ""
     publisher_name = root.find(".//metadata:publisher/metadata:name", namespaces=nsmap)
     if publisher_name is not None:
@@ -58,6 +64,9 @@ def transform_metadata(filename):
     date_name = root.find(".//metadata:date[@qualifier = 'creation']", namespaces=nsmap)
     if date_name is not None:
         date = date_name.text
+    dateAvailable = ""
+    if date != "":
+        dateAvailable = str(int(date.split('-')[0]) + 95)
     language = ""
     language_name = root.find(".//metadata:language", namespaces=nsmap)
     if language_name is not None:
@@ -94,10 +103,11 @@ def transform_metadata(filename):
     keywords_name = root.findall(".//metadata:subject[@qualifier = 'UNTL-BS']", namespaces=nsmap)
     if keywords_name is not None:
         for keyword in keywords_name:
-            keyword = keyword.text
-            keyword = keyword.split(" - ")
-            for item in keyword:
-                keywords.add(item)
+            if keyword not in keyword_exceptions:
+                keyword = keyword.text
+                keyword = keyword.split(" - ")
+                for item in keyword:
+                    keywords.add(item)
     keywords = list(keywords)
     keywords.sort()
     geographic = set()
@@ -124,7 +134,7 @@ def transform_metadata(filename):
             subject = subject.text
             subject = subject.split(" -- ")
             for item in subject:
-                if item not in geographic:
+                if item not in geographic and item not in subject_exceptions:
                     while item.endswith("."):
                         item = item[:-1]
                     subjects.add(item)
@@ -149,7 +159,7 @@ def transform_metadata(filename):
     relation_xml = SubElement(dcterms, "dcterms:relation.isPartOf")
     relation_xml.text = "Texas State Library and Archives Newspaper collection"
     citation_xml = SubElement(dcterms, "dcterms:identifier.bibliographicCitation")
-    citation_xml.text = f"{title}, {relation_xml.text}. Archives and Information Services. Texas State Library and Archives Commission"
+    citation_xml.text = f"{title}, {relation_xml.text}. Archives and Information Services. Texas State Library and Archives Commission."
     description = f"{main_description}"
     for item in extra_text:
         description = f"{description} {item}"
@@ -169,6 +179,9 @@ def transform_metadata(filename):
     if date != "":
         date_xml = SubElement(dcterms, "dcterms:date.created")
         date_xml.text = date
+    if dateAvailable != "":
+        dateAvailable_xml = SubElement(dcterms, "dcterms:date.available")
+        dateAvailable_xml.text = dateAvailable
     language_dict = {'eng': 'English', 'spa': "Spanish"}
     if language != "" and language in language_dict.keys():
         language_xml = SubElement(dcterms, "dcterms:language")
@@ -182,7 +195,7 @@ def transform_metadata(filename):
         issue_xml = SubElement(dcterms, "dcterms:source.issue")
         issue_xml.text = str(int(issue.split(" ")[-1]))
     if edition != "":
-        edition_xml = SubElement(dcterms, "dcterms:issue")
+        edition_xml = SubElement(dcterms, "dcterms:source.edition")
         edition_xml.text = edition.split(" ")[-1]
     for item in subjects:
         subject_xml = SubElement(dcterms, "dcterms:subject")
@@ -200,8 +213,11 @@ def transform_metadata(filename):
     if phys_details != "":
         phys_details_xml = SubElement(dcterms, "tslac:note")
         phys_details_xml.text = phys_details
+    if proprietor != "":
+        proprietor_xml = SubElement(dcterms, "tslac:note")
+        proprietor_xml.text = f"{proprietor}, proprietor."
     rights = SubElement(dcterms, 'dcterms:rights')
-    rights.text = "Some kind of rights statement goes here"
+    rights.text = "If this newspaper issue was published 95 years ago or longer, it is in the Public Domain under the laws of the United States. If this issue was published less than 95 years ago, it is still within copyright under the laws of the United States. Unless expressly stated otherwise, the Texas State Library and Archives Commission makes no warranties about the Item and cannot guarantee the accuracy of this Rights Statement. You are responsible for your own use. Please contact the Texas State Library and Archives Commission for more information. You may need to obtain other permissions for your intended use. For example, other rights such as publicity, privacy or moral rights may limit how you may use the material."
     return prettyify(dcterms)
 
 
@@ -251,7 +267,7 @@ for directory in source_pdfs:
     source_metadata = f"{directory.replace('02_pdf', '')}metadata.untl.xml"
     target_directory = f"{target}/{year}/{identifier}/presentation2"
     target_metadata = f"{target_directory}/{identifier}.metadata"
-    presentation3_metadata = f"{target}/{year}/{identifier}/presentation2/{identifier}.metadata"
+    presentation3_metadata = f"{target}/{year}/{identifier}/presentation3/{identifier}.metadata"
     pdf_target = f"{target}/{year}/{identifier}/presentation3/{identifier}.pdf"
     pdf_target_metadata = f"{pdf_target}.metadata"
     if os.path.isfile(source_metadata):
