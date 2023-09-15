@@ -30,6 +30,16 @@ def optionGenerator(something, extraAttribute1, extraAttribute2):
     stringy = f'\t<option value="{something}" extraAttribute1="{extra1}" extraAttribute2="{extra2}">{something}</option>\n'
     return stringy
 
+def getNamespaces(root):
+    namespaces = root.nsmap
+    namespaces['xmlns'] = namespaces[None]
+    namespaces.pop(None, None)
+    namespaces['dcterms'] = "http://dublincore.org/documents/dcmi-terms/"
+    namespaces['tslac'] = 'https://www.tsl.texas.gov/'
+    namespaces['MetadataResponse'] = namespaces['xmlns']
+    namespaces['EntityResponse'] = namespaces['xmlns']
+    namespaces['ChildrenResponse'] = namespaces['xmlns']
+    return namespaces
 
 metadata = input("directory to crawl for data: ")
 data = []
@@ -41,27 +51,10 @@ for dirpath, dirnames, filenames in os.walk(metadata):
                 filedata = r.read()
                 if "<dcterms:dcterms" in filedata:
                     print(filename)
-                    if "v6.0" in filedata:
-                        version = "v6.0"
-                    if "v6.1" in filedata:
-                        version = "v6.1"
-                    if "v6.2" in filedata:
-                        version = "v6.2"
-                    if "v6.3" in filedata:
-                        version = "v6.3"
-                    if "v6.4" in filedata:
-                        version = "v6.4"
-                    if "v6.5" in filedata:
-                        version = "v6.5"
-                    if "v6.6" in filedata:
-                        version = "v6.6"
-                    if "v6.7" in filedata:
-                        version = "v6.7"
-                    namespaces['MetadataResponse'] = f"http://preservica.com/EntityAPI/{version}"
-                    namespaces['xip'] = f"http://preservica.com/XIP/{version}"
                     try:
                         dom = ET.parse(filename)
                         root = dom.getroot()
+                        namespaces = getNamespaces(root)
                         something = dom.find(".//tslac:txdot.district", namespaces=namespaces).text
                         county = root.xpath("//dcterms:coverage.spatial", namespaces=namespaces)
                         countyText = ""
@@ -289,6 +282,8 @@ function dosearch() {
 	        collectible = "&parenthierarchy=SO_31d1be12-eb74-489a-84c3-00163569afa7"
         } else if (collection == "AUS") {
             collectible = "&parenthierarchy=SO_4ec205fa-8f6a-47c7-a960-20cf4ca18420"
+        } else if (collection == "CHS") {
+            collectible = "&parenthierarchy=SO_295c7fe6-cb45-48ec-ac71-a1ff60b47e55"
         } else if (collection == "ELP") {
             collectible = "&parenthierarchy=SO_3a09afe5-6f25-407a-9a30-aae02cea1c0f"
         } else if (collection == "HOU") {
@@ -303,9 +298,11 @@ function dosearch() {
             collectible = "&parenthierarchy=SO_eeb6f2c9-c261-4dfa-b657-741260358a63"
         } else if (collection == "SJT") {
             collectible = "&parenthierarchy=SO_4d31c886-a8af-48f6-94e2-13ff3902fb52"
-        }
+        } else if (collection == "WFS") {
+            collectible = "&parenthierarchy=SO_e8783b48-25f2-4d3a-8026-30df1c8a09d4"
     } else {
         collectible = "&parenthierarchy=SO_735ef8cc-f549-4743-a401-e84b13595b06"
+    }
     }
     var dately = date1.value;
     var datelier = date2.value
