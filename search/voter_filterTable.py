@@ -553,9 +553,7 @@ function master_filter() {
 		td7 = tr[i].getElementsByTagName("td")[6];
 		td8 = tr[i].getElementsByTagName("td")[7];
 		td9 = tr[i].getElementsByTagName("td")[8];
-		td10 = tr[i].getElementsByTagName("td")[9];
-		td11 = tr[i].getElementsByTagName("td")[10];
-		if (td1, td2, td3, td4, td5, td6, td7, td8, td9, td10, td11) {
+		if (td1, td2, td3, td4, td5, td6, td7, td8, td9) {
 			if ((td3.innerHTML.toUpperCase().indexOf(page_num) > -1) && (td5.innerHTML.toUpperCase().indexOf(filter_given_name) > -1) && (td6.innerHTML.toUpperCase().indexOf(filter_surname) > -1) && (td8.innerHTML.toUpperCase().indexOf(filter_birthplace) > -1) && (td9.innerHTML.toUpperCase().indexOf(datify) > -1) && (td10.innerHTML.toUpperCase().indexOf(filter_residence) > -1) && (td11.innerHTML.toUpperCase().indexOf(filter_county) > -1)) {
 				tr[i].style.display = "";
 			} else {
@@ -617,7 +615,7 @@ print("preservica data aggregated and printed to screen above")
 # now constructing the html
 table_head = "<table id='table'>\n<tbody>\n"
 table_head = f"{table_head}<tr style='background-color:lightgray; border-bottom:3px solid blank; padding: 0px;' class='silly'><td>Image link</td><td>Microfilm reel</td><td>Image on reel</td>" \
-             f"<td>Prefix</td><td>Given Name</td><td>Surname</td><td>Suffix</td><td>Birthplace</td><td>Date</td>" \
+             f"<td>Given Name</td><td>Surname</td><td>Birthplace</td><td>Date</td>" \
              f"<td>Residence Location</td><td>County</td></tr>"
 df = PD.read_excel(source_spreadsheet, dtype=object)
 listy = df.columns
@@ -657,10 +655,8 @@ for row in df.itertuples():
         temp_text = f"{temp_text}\n\t<td><a href='{metadata_dict[valuables['ImageFileName']][0]}'>Link to image</a></td>"
         temp_text = f"{temp_text}\n\t<td>{rolio(valuables['SourceArchiveRoll'])}</td>"
         temp_text = f"{temp_text}\n\t<td>{valuables['ImageFileName'].split('-')[-1]}</td>"
-        temp_text = f"{temp_text}\n\t<td>{prefix_fixer(valuables['NamePrefix'])}</td>"
         temp_text = f"{temp_text}\n\t<td>{initial_fixer(valuables['GivenName'])}</td>"
         temp_text = f"{temp_text}\n\t<td>{valuables['Surname']}</td>"
-        temp_text = f"{temp_text}\n\t<td>{valuables['NameSuffix']}</td>"
         temp_text = f"{temp_text}\n\t<td>{valuables['BirthPlace']}</td>"
         temp_text = f"{temp_text}\n\t<td>{date_str}</td>"
         temp_text = f"{temp_text}\n\t<td>{valuables['ResidencePlace']}</td>"

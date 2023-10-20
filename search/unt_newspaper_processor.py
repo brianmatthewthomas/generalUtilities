@@ -82,21 +82,21 @@ def transform_metadata(filename):
     volume = ""
     volume_name = root.find(".//metadata:citation[@qualifier = 'volume']", namespaces=nsmap)
     if volume_name is not None:
-        volume = volume_name.text
+        volume = str(volume_name.text).replace('[', '').replace(']', '')
         while len(volume) < 3:
             volume = f"0{volume}"
         volume = f"Vol. {volume}"
     issue = ""
     issue_name = root.find(".//metadata:citation[@qualifier = 'issue']", namespaces=nsmap)
     if issue_name is not None:
-        issue = issue_name.text
+        issue = str(issue_name.text).replace('[', '').replace(']', '')
         while len(issue) < 3:
             issue = f"0{issue}"
         issue = f"No. {issue}"
     edition = ""
     edition_name = root.find(".//metadata:citation[@qualifier = 'edition']", namespaces=nsmap)
     if edition_name is not None:
-        edition = edition_name.text
+        edition = str(edition_name.text).replace('[', '').replace(']', '')
         edition = f"Ed. {edition}"
     # find the multiple details
     keywords = set()
@@ -151,7 +151,7 @@ def transform_metadata(filename):
                                           'xsi:schemaLocation': "http://dublincore.org/documents/dcmi-terms/ qualifiedDcSchema.xsd",
                                           'xmlns:xsi': "http://www.w3.org/2001/XMLSchema-instance"})
     title = f"{serial} {publisher_location}, {volume}, {issue}, {edition}, {date}"
-    title = title.replace(" ,", ",")
+    title = title.replace(" ,", ",").replace(',,', ',')
     while title.endswith(",") or title.endswith(" "):
         title = title[:-1]
     title_xml = SubElement(dcterms, 'dcterms:title')
@@ -255,12 +255,12 @@ for directory in source_tiffs:
             create_directory(filename2)
             shutil.copy2(filename1, filename2)
             shutil.copystat(filename1, filename2)
-        source_checksum = create_sha256(filename1)
-        target_checksum = create_sha256(filename2)
-        if source_checksum != target_checksum:
-            print(f"something went wrong copying {filename1}, exiting")
-            sys.exit()
-        print(f"{filename2} verified")
+            source_checksum = create_sha256(filename1)
+            target_checksum = create_sha256(filename2)
+            if source_checksum != target_checksum:
+                print(f"something went wrong copying {filename1}, exiting")
+                sys.exit()
+            print(f"{filename2} verified")
 for directory in source_pdfs:
     year = directory.split("/")[-2][:4]
     identifier = directory.split("/")[-2].split("-")[0]
@@ -293,14 +293,16 @@ for directory in source_pdfs:
             create_directory(filename2)
             shutil.copy2(filename1, filename2)
             shutil.copystat(filename1, filename2)
-        source_checksum = create_sha256(filename1)
-        target_checksum = create_sha256(filename2)
-        if source_checksum != target_checksum:
-            print(f"something went wrong copying {filename1}, exiting")
-            sys.exit()
-        print(f"{filename2} verified")
-        merger.append(fileobj=open(filename2, 'rb'))
-    merger.write(pdf_target)
-    merger.close()
-    print(f"{pdf_target} aggregated, moving on")
+            source_checksum = create_sha256(filename1)
+            target_checksum = create_sha256(filename2)
+            if source_checksum != target_checksum:
+                print(f"something went wrong copying {filename1}, exiting")
+                sys.exit()
+            print(f"{filename2} verified")
+    if not os.path.isfile(pdf_target):
+        for file in files:
+            merger.append(fileobj=open(filename2, 'rb'))
+        merger.write(pdf_target)
+        merger.close()
+        print(f"{pdf_target} aggregated, moving on")
 print("all done!")

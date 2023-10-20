@@ -67,6 +67,12 @@ layout = [
     ],
     [
         SG.Push(),
+        SG.ProgressBar(1, orientation="h", size=(83, 20), bar_color="dark green", key="-Progress-", border_width=5,
+                       relief="RELIEF_SUNKEN"),
+        SG.Push()
+    ],
+    [
+        SG.Push(),
         SG.Multiline(default_text="Click start to start process, it may be necessary to press start twice\nuse transfer_inventory.csv file to populate for six "
                                   "columns of transfer form E-records Inventory tab\ninclude checksum.exf file in "
                                   "the transfer\n\n",
@@ -110,6 +116,12 @@ while True:
                 directory_list.add(dirpath)
         directory_list = list(directory_list)
         directory_list.sort()
+        window['-OUTPUT-'].update("Generating progress bar information\n", append=True)
+        big_count = 0
+        current_count = 0
+        for dirpath, dirnames, filenames in os.walk(my_directory):
+            for filename in filenames:
+                big_count += 1
         # start working in folders
         overall_volume = 0
         overall_filecount = 0
@@ -157,6 +169,8 @@ while True:
                 format_set.add(my_format)
                 overall_extensions.add(my_format)
                 files_list.append([get_size(filesize), "1", my_format, file, file_timestamp, file_timestamp])
+                current_count += 1
+                window['-Progress-'].update_bar(current_count, big_count)
             format_set = list(format_set)
             format_set.sort()
             format_string = ""
