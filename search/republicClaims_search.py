@@ -56,7 +56,7 @@ metadata = "/media/sf_D_DRIVE/harvest/claims" #input("directory to crawl for dat
 myCSV = f"{metadata}/temp.csv"
 with (open(myCSV, "w") as csvfile):
     myWriter = csv.writer(csvfile)
-    myWriter.writerow(["Name of claimant", "Additional names", "Claim type", "Claim number", "Microfilm reel number", "Link to claim"])
+    myWriter.writerow(["Name of claimant", "Additional names", "Claim type", "Claim number", "Link to claim"])
     data = []
     for dirpath, dirnames, filenames in os.walk(metadata):
         for filename in filenames:
@@ -107,7 +107,7 @@ with (open(myCSV, "w") as csvfile):
                                 temp_text = temp_text[:-2]
                             myLink = f'<a href="https://tsl.access.preservica.com/uncategorized/IO_{row_dict["link"]}/" target="_blank" title="Link to {row_dict["type"]} for {row_dict["claimant"]}">Link to claim</a>'
                             myWriter = csv.writer(csvfile)
-                            myWriter.writerow([row_dict['claimant'], temp_text, row_dict['type'], row_dict['number'], row_dict['reel'], myLink])
+                            myWriter.writerow([row_dict['claimant'], temp_text, row_dict['type'], row_dict['number'], myLink])
                             print(f"{filename} processed")
 csvfile.close()
 
@@ -118,33 +118,53 @@ for item in data:
     table_data = table_data + item + "\n"
 df = PD.read_csv(myCSV, dtype=object)
 df.sort_values(by=['Name of claimant'])
-table_data = df.to_html(index=False)
-
-form_text = f'''<form id="form" onchange="master_filter()" onkeyup="master_filter()">
+counter = 0
+math = len(df)/3
+math = int(str(math)[:5])
+var1 = 0
+var2 = math
+while var2 < len(df):
+    df1 = df[var1:var2]
+    table_data = df1.to_html(index=False)
+    dom = ET.fromstring(table_data)
+    root = dom.xpath(".//tr")
+    for item in root:
+        others = item.xpath("./td")
+        if others is not None:
+            if len(others) > 0:
+                other = others[-1]
+                other.attrib['class'] = "tommy"
+                other1 = others[-2]
+                other1.attrib['class'] = "drop5"
+                other2 = others[-3]
+                other2.attrib['class'] = 'drop4'
+    writable = ET.tostring(dom)
+    table_data = writable
+    form_text = f'''<form id="form" onchange="master_filter()" onkeyup="master_filter()">
 
             <div class="tdaSearch_thing1">
                 <h3>
-                  <label for="claimant" class="collapsible">Claimant name</label>
+                  <label for="claimant">Claimant name</label>
                     <strong id="claimant_note" style="color:purple; display:none;"> *Active filter</strong>
-                    <div class="collapsibleContent">
+                    <div>
                         <input id="claimant" placeholder="Enter a claimant name starting with last name" class="inputs" type="text"/>
                     </div>
                 </h3>
             </div>  
             <div class="tdaSearch_thing1">
                 <h3>
-                    <label for="more_names" class="collapsible">Additional names </label>
+                    <label for="more_names" >Additional names </label>
                     <strong id="more_names_note" style="color:purple; display:none;"> *Active filter</strong>
-                    <div class="collapsibleContent">
+                                                                                                       <div>
                         <input id="more_names" placeholder="Enter additional names to filter by" type="text" class="inputs"/>
                     </div>
                 </h3>
             </div>
             <div class="tdaSearch_thing1">
                 <h3>
-                    <label for="type_drop" class="collapsible">Claim type  </label>
+                    <label for="type_drop">Claim type  </label>
                     <strong id="type_note" style="color:purple; display:none;"> *Active filter</strong>
-                    <div class="collapsibleContent">
+                    <div>
                         <select id="type_drop" class="inputs">
                             <option value="">Select claim type</option>
                             <option>Audited claim</option>
@@ -157,9 +177,9 @@ form_text = f'''<form id="form" onchange="master_filter()" onkeyup="master_filte
             </div>
             <div class="tdaSearch_thing1">
                 <h3>
-                    <label for="claim_number" class="collapsible">Claim number </label>
+                    <label for="claim_number" >Claim number </label>
                     <strong id="claim_number_note" style="color:purple; display:none;"> *Active filter</strong>
-                    <div class="collapsibleContent">
+                    <div>
                         <input id="claim_number" placeholder="Enter claim number" type="text" class="inputs"/>
                     </div>
                 </h3>
@@ -173,10 +193,8 @@ form_text = f'''<form id="form" onchange="master_filter()" onkeyup="master_filte
                 <input onClick="location.reload()" style="height:2.75em;" type="reset" value="Reset options"/>
             </div>
         </form>
-'''
-
-
-preamble = '''<html>
+    '''
+    preamble = '''<html>
 <head>
 <style>
 	.tdaSearch_search_container{display:table; border: 1px outset; border-radius: 10px}
@@ -268,6 +286,20 @@ label{display: inline-block; padding-bottom: 5px;}
 }
 .drop0{
 	display: none;
+}
+.tommy{
+    text-align: center;
+    padding: 10px;
+}
+.tommy > a{
+    border-radius: 5px;
+    border: 2px outset darkgray;
+    font-weight: bold;
+    background-color: darkgray;
+    padding: 5px;
+}
+.tommy > a:hover{
+    border: 2px inset darkgray;
 }
 </style>
 <style>
@@ -393,17 +425,15 @@ label{display: inline-block; padding-bottom: 5px;}
 <p class="tdaSearch_link2" style="text-align:center">
     <a href="https://tsl.access.preservica.com/uncategorized/SO_fd1da040-38cc-4ca6-8299-237ddc19d983/">Browse the Republic claims</a>
 </p>
-<div align="center" class="tdaSearch_search_container">
+<div align="center" class="tdaSearch_search_container" style="width:100%">
     <div align="left" class="tdaSearch_search_warning">
         <p>Use the options below to filter claims list in the <a href="#scotx">results table</a>
         </p>
     </div>
     <div class="tdaSearch_search_form_left" style="padding-left: 10px;">
 '''
-
-table_text = f'''{table_data}'''
-
-script = '''<script>
+    table_text = f'''{table_data}'''
+    script = '''<script>
 	function master_filter() {
 		var table, tr, i, td1, td2, td3, td4
 		var claimants = claimant.value;
@@ -430,8 +460,7 @@ script = '''<script>
 		}
 	}
 </script>'''
-
-html = f'''{preamble}{form_text}
+    html = f'''{preamble}{form_text}
     </div>
     <div class="tdaSearch_search_form_right">
         <img title="Index page" caption="Sample index volume page" src="https://tsl.access.preservica.com/wp-content/uploads/sites/10/2023/05/judiciary_criminalAppeals_indexes.jpg" class="tdaSearch_graphic" id="court_graphic">
@@ -440,28 +469,29 @@ html = f'''{preamble}{form_text}
         </p>
     </div>
 </div>
-{table_data}
-{script}
+    {table_data}
+    {script}
 </div>
 </html>
 '''
-
-
-
-
-
-# write the html file
-output = f"{metadata}/output.html"
-with open(output, "w") as w:
-    w.write(html)
-w.close()
-# adjust the html output to get the overall desired results
-with open(output, "r") as r:
-    filedata = r.read()
-    filedata = filedata.replace('<table border="1" class="dataframe">', '<table style="border: 3px solid black;padding: 0px" id="scotx">')
-    filedata = filedata.replace('<tr style="text-align: right;">', '<tr style="background-color:lightgray;border-bottom:3px solid black;padding: 0px" class="silly">')
-    filedata = filedata.replace('<th>Additional names</th>', '<th style="width:30%;max-width:500px;">Additional names</th>')
-    filedata = filedata.replace('&lt;', '<').replace('&gt;', '>').replace("NaN", 'n/a')
+    # write the html file
+    output = f"{metadata}/output{str(counter)}.html"
     with open(output, "w") as w:
-        w.write(filedata)
+        w.write(html)
     w.close()
+    # adjust the html output to get the overall desired results
+    with (open(output, "r") as r):
+        filedata = r.read()
+        filedata = filedata.replace('<table border="1" class="dataframe">', '<table style="border: 3px solid black;padding: 0px" id="scotx">')
+        filedata = filedata.replace('<tr style="text-align: right;">', '<tr style="background-color:lightgray;border-bottom:3px solid black;padding: 0px" class="silly">')
+        filedata = filedata.replace('<th>Additional names</th>', '<th style="width:30%;max-width:500px;">Additional names</th>')
+        filedata = filedata.replace('&lt;', '<').replace('&gt;', '>').replace("NaN", 'n/a')
+        filedata = filedata.replace("\\n", "\n").replace("b'<table", "<table").replace("</table>'", "</table>")
+        while "  " in filedata:
+            filedata = filedata.replace("  ", " ")
+        with open(output, "w") as w:
+            w.write(filedata)
+        w.close()
+    counter += 1
+    var1 = var2
+    var2 = var2 + math
