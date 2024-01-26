@@ -97,9 +97,10 @@ def prettify(elem):
     return reparse.toprettyxml(indent="    ")
 
 #toSort = input("folder to sort:")
-toSort = "/media/sf_Y_DRIVE/in-process/Attorney General/OpenRecordLetters/2007"
+toSort = "/media/sf_Z_DRIVE/processed/attorney general/OpenRecordLetters/2008"
 #targetSort = input("where to put the sorted files: ")
-targetSort = "/media/sf_Y_DRIVE/in-process/Attorney General/OpenRecordLetters/sorted"
+targetSort = "//media/sf_Z_DRIVE/processed/attorney general/OpenRecordLetters/sorted2"
+'''
 for dirpath, dirnames, filenames in os.walk(toSort):
     for filename in filenames:
         sorting = folder_name(filename)
@@ -112,10 +113,10 @@ for dirpath, dirnames, filenames in os.walk(toSort):
             print("copied", filename, "to", sorting)
         else:
             print(filename, "already copied")
-
 '''
+
 #spreadsheet = input("input the spreadsheet name with filepath: ")
-spreadsheet = "/media/sf_Z_DRIVE/Working/OAG/2022_066_20220803/Metadata for TSLAC 1997-2003/ORD_ORLClosed_2007.xlsx"
+spreadsheet = "/media/sf_Z_DRIVE/processed/attorney general/OpenRecordLetters/2008/ClosedORLs08.xlsx"
 df = PD.read_excel(spreadsheet, dtype=object)
 abbott_list = [304, 307, 349, 922, 2035, 2080, 304, 307, 3403, 3462, 349, 3947, 4480, 4797, 4803, 4864, 4906, 5032,
                5122, 5464, 5871, 6055, 6190, 6213, 6282, 6312, 6534, 6670]
@@ -137,7 +138,7 @@ for row in df.itertuples():
     ocrNote = SubElement(dcterms, 'tslac:note')
     ocrNote.text = 'Optical character recognition of these files was completed using automated tools and have not been reviewed for accuracy.'
     valuables['dt_status'] = str(valuables['dt_status'])
-    valuables['dt_received'] = str(valuables['dt_received'])
+    valuables['dt_received'] = str(valuables['dt_status'])
     date = valuables['dt_status'].split(" ")[0]
     date = dateify(valuables['dt_status'])
     valuables['dt_status'] = dateify(valuables['dt_status'])
@@ -146,10 +147,13 @@ for row in df.itertuples():
     created = SubElement(dcterms, 'dcterms:date.created')
     created.text = date
     identifier1 = valuables['issued_as'][-2:]
-    if int(identifier1) < 50:
-        identifier1 = "20" + identifier1
-    else:
-        identifier1 = "19" + identifier1
+    try:
+        if int(identifier1) < 50:
+            identifier1 = "20" + identifier1
+        else:
+            identifier1 = "19" + identifier1
+    except:
+        continue
     identifier2 = str(valuables['issued_as_num'])
     identifier3 = int(valuables['issued_as_num'])
     while len(identifier2) < 5:
@@ -260,5 +264,5 @@ for row in df.itertuples():
     metadata = open(sorting, "wt", encoding="utf-8")
     metadata.write(prettify(dcterms))
     metadata.close()
-'''
+
 print("all done")
