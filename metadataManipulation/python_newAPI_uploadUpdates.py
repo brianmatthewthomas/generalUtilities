@@ -23,7 +23,7 @@ print(headers)
 #create a basic timer
 timer = time.time() + 600
 # user-defined parameters
-seriousFilepath = "/media/sf_F_DRIVE/Archives/Electronic_records/Texas_Digital_Archive/working_materials/newAPI/correcto" #input("XIP files directory without trailing /:")
+seriousFilepath = input("XIP files directory without trailing /:")
 
 # constants
 base_url = f'https://{prefix}.preservica.com/api/entity/'
@@ -36,11 +36,17 @@ math = seriousFilepath.split("/")[-1]
 math2 = len(math)
 math = seriousFilepath[:-math2]
 directory = math + "errors/placeholder.txt"
+directory2 = math + "done/placeholder.txt"
 preservation_utilities.dirMaker(directory)
+preservation_utilities.dirMaker(directory2)
 placeholder = open(directory, "a")
 placeholder.write('this file exists only to make sure errors directory creation worked')
 placeholder.close()
+placeholder = open(directory2, "a")
+placeholder.write('this file exists only to maker sure completed directory creation worked')
+placeholder.close()
 directory = directory[:-16]
+directory2 = directory2[:-16]
 for dirpath, dirnames, filenames in os.walk(seriousFilepath):
     # load directory to crawl
     for filename in filenames:
@@ -48,6 +54,7 @@ for dirpath, dirnames, filenames in os.walk(seriousFilepath):
         # use convention to dictate how to extract uuid
         # post file based on convention and extracted uuid
         filename2 = os.path.join(directory, filename)
+        filename3 = os.path.join(directory2, filename)
         if "metadata" in filename and filename.endswith(".xml"):
             try:
                 filename = os.path.join(dirpath, filename)
@@ -95,7 +102,7 @@ for dirpath, dirnames, filenames in os.walk(seriousFilepath):
                     status = str(status)
                     log.write(filename + ' may have failed, check Preservica ' + "\n")
                     response = requests.put(entityURL, headers=headers, data=filedata)
-                    shutil.copyfile(filename, filename2)
+                    shutil.move(filename, filename2)
                 if status == 401:
                     failure = failure + 1
                     print(filename, "may have failed, logging back in")
@@ -103,33 +110,35 @@ for dirpath, dirnames, filenames in os.walk(seriousFilepath):
                     log.write(filename + ' may have failed, check Preservica ' + "\n")
                     headers = preservation_utilities.login(url, payload)
                     response = requests.put(entityURL, headers=headers, data=filedata)
-                    shutil.copyfile(filename, filename2)
+                    shutil.move(filename, filename2)
                 if status == 404:
                     failure = failure + 1
                     status = str(status)
                     print(filename, "may have failed")
-                    shutil.copyfile(filename, filename2)
+                    shutil.move(filename, filename2)
                 if status == 422:
                     failure = failure + 1
                     status = str(status)
                     log.write(filename + ' may have failed, check Preservica ' + "\n")
                     response = requests.put(entityURL, headers=headers, data=filedata)
-                    shutil.copyfile(filename, filename2)
+                    shutil.move(filename, filename2)
                 if status == 500:
                     failure = failure + 1
                     status = str(status)
                     print(filename, "may have failed")
-                    shutil.copyfile(filename, filename2)
+                    shutil.move(filename, filename2)
                 if status == 502:
                     failure = failure + 1
                     status = str(status)
                     log.write(filename + ' may have failed, check Preservica ' + "\n")
-                    shutil.copyfile(filename, filename2)
+                    shutil.move(filename, filename2)
                 if status == 504:
                     failure = failure + 1
                     status = str(status)
                     print(filename, "may have failed")
-                    shutil.copyfile(filename, filename2)
+                    shutil.move(filename, filename2)
+                if status == 200:
+                    os.rename(filename, filename3)
                 status = str(status)
                 print("status:", status, "at", current, "for", filename)
                 log.write('status: ' + status + ' at ' + current + ' for ' + filename + "\n")

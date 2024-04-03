@@ -51,6 +51,17 @@ def row_generator(row_data):
     </tr>'''
     return row
 
+def getNamespaces(root):
+    namespaces = root.nsmap
+    namespaces['xmlns'] = namespaces[None]
+    namespaces.pop(None, None)
+    namespaces['dcterms'] = "http://dublincore.org/documents/dcmi-terms/"
+    namespaces['tslac'] = 'https://www.tsl.texas.gov/'
+    namespaces['MetadataResponse'] = namespaces['xmlns']
+    namespaces['EntityResponse'] = namespaces['xmlns']
+    namespaces['ChildrenResponse'] = namespaces['xmlns']
+    return namespaces
+
 empty_dict = {'case':'','link':'','oldCase':"",'year':"",'court':"",'county':"",'judge':"",'lawyer':"",'party':"",'cause':""}
 years = set()
 countys = set()
@@ -71,32 +82,9 @@ for dirpath, dirnames, filenames in os.walk(metadata):
                 filedata = r.read()
                 if "dcterms" in filedata:
                     print("processing", filename)
-                    if "EntityAPI/v6.9" in filedata:
-                        version = "v6.9"
-                    if "EntityAPI/v6.8" in filedata:
-                        version = "v6.8"
-                    if "EntityAPI/v6.7" in filedata:
-                        version = "v6.7"
-                    if "EntityAPI/v6.6" in filedata:
-                        version = "v6.6"
-                    if "EntityAPI/v6.5" in filedata:
-                        version = "v6.5"
-                    if "EntityAPI/v6.4" in filedata:
-                        version = "v6.4"
-                    if "EntityAPI/v6.3" in filedata:
-                        version = "v6.3"
-                    if "EntityAPI/v6.2" in filedata:
-                        version = "v6.2"
-                    if "EntityAPI/v6.1" in filedata:
-                        version = "v6.1"
-                    if "EntityAPI/v6.0" in filedata:
-                        version = "v6.0"
-                    nsmap = {'MetadataResponse': f"http://preservica.com/EntityAPI/{version}",
-                             'xip': f"http://preservica.com/XIP/{version}",
-                             'dcterms': "http://dublincore.org/documents/dcmi-terms/",
-                             'tslac': "https://www.tsl.texas.gov/"}
                     dom = ET.parse(filename)
                     root = dom.getroot()
+                    nsmap = getNamespaces(root)
                     row_dict['link'] = dom.find(".//xip:Entity", namespaces=nsmap).text
                     if filename_placeholder.startswith("IO"):
                         row_dict['link'] = "IO_" + row_dict['link']
