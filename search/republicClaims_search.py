@@ -52,12 +52,13 @@ def row_generator(row_data):
 
 empty_dict = {'claimant':'','names':"",'type':"",'number':"",'reel':"",'link':""}
 
-metadata = "/media/sf_D_DRIVE/harvest/claims" #input("directory to crawl for data: ")
+metadata = "/media/sf_D_DRIVE/harvest/_claims" #input("directory to crawl for data: ")
 myCSV = f"{metadata}/temp.csv"
 with (open(myCSV, "w") as csvfile):
     myWriter = csv.writer(csvfile)
     myWriter.writerow(["Name of claimant", "Additional names", "Claim type", "Claim number", "Link to claim"])
     data = []
+    type_set = set()
     for dirpath, dirnames, filenames in os.walk(metadata):
         for filename in filenames:
             if "metadata" in filename:
@@ -83,6 +84,7 @@ with (open(myCSV, "w") as csvfile):
                             for myType in myTypes:
                                 if myType.text != "Text":
                                     row_dict['type'] = myType.text
+                                    type_set.add(row_dict['type'])
                             type_list = row_dict['type'].split(" ")
                             type_list.append("number")
                             type_list.append("Republic")
@@ -105,7 +107,7 @@ with (open(myCSV, "w") as csvfile):
                                 temp_text = f"{temp_text}{item}; "
                             while temp_text.endswith("; "):
                                 temp_text = temp_text[:-2]
-                            myLink = f'<a href="https://tsl.access.preservica.com/uncategorized/IO_{row_dict["link"]}/" target="_blank" title="Link to {row_dict["type"]} for {row_dict["claimant"]}">Link to claim</a>'
+                            myLink = f'<a href="https://tsl.access.preservica.com/uncategorized/IO_{row_dict["link"]}/" target="_blank" title="Link to {row_dict["type"]} for {row_dict["claimant"]}">View claim</a>'
                             myWriter = csv.writer(csvfile)
                             myWriter.writerow([row_dict['claimant'], temp_text, row_dict['type'], row_dict['number'], myLink])
                             print(f"{filename} processed")
@@ -118,14 +120,17 @@ for item in data:
     table_data = table_data + item + "\n"
 df = PD.read_csv(myCSV, dtype=object)
 df.sort_values(by=['Name of claimant'])
+type_set = list(type_set)
+type_set.sort()
 counter = 0
 math = len(df)/3
 math = int(str(math)[:5])
 var1 = 0
 var2 = math
-while var2 < len(df):
-    df1 = df[var1:var2]
-    table_data = df1.to_html(index=False)
+
+for my_type in type_set:
+    df2 = df.loc[df['Claim type'] == my_type]
+    table_data = df2.to_html(index=False)
     dom = ET.fromstring(table_data)
     root = dom.xpath(".//tr")
     for item in root:
@@ -186,7 +191,7 @@ while var2 < len(df):
             </div>
 
             <div id="NullResultsMessage" style="display:none;border:5px outset #a91d2f;background-color:lightgrey;text-align:center;border-radius:10px;">
-                <p><span class="message" style="font-weight:bold;color:#a91d2f;font-size:2em;">Warning:</span><br/><br/>No matching results. Update your selections from the options above or click on reset to start over.</p>
+                <p>No matching results. Update your selections from the options above or click on reset to start over.</p>
             </div>
             <br/>
             <div class="tdaSearch_thing5">
@@ -419,7 +424,7 @@ label{display: inline-block; padding-bottom: 5px;}
 <div style="width:100%">
 <div width="100%" class="container">
     <h2 class="tdaSearch_search_title" style="text-align:center; color: #a91e2f;" id="top">
-        <strong>Republic Claims file table</strong>
+        <strong>Republic Claims custom search</strong>
     </h2>
 </div>
 <p class="tdaSearch_link2" style="text-align:center">
