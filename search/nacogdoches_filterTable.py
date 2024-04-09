@@ -29,6 +29,34 @@ def optionGenerator(something=set):
         textual = textual + stringy
     return textual
 
+url_dict = {
+    "Coahuila records, Censuses": "63234c67-2d84-4783-8010-3823f3f1c3f1",
+    "Coahuila records, Elections": "d83abb22-a696-4783-b08e-fb9412711ed8",
+    "Coahuila records, General Correspondence": "3c3c203a-ab6d-40bf-949d-1ac38c3a00fc",
+    "Nacogdoches records, Colonial and National Government, General Correspondence": "e07ac52f-0434-48a2-8431-86a4924c8baf",
+    "Nacogdoches records, Colonial and National Government, Royal and Federal Decrees": "84e132f4-20ba-451d-9c7f-519d41e2079e",
+    "Nacogdoches records, Correspondence of the Captains General": "4ead81f0-2442-41e1-9aa0-21d595e9424e",
+    "Nacogdoches records, Court of the Alcalde": "ca542d92-c055-4b4a-8888-0616647dc669",
+    "Nacogdoches records, Department of Texas, Correspondence of Jefe": "f5899066-173e-4b06-a101-f22ffec33d14",
+    "Nacogdoches records, Department of Texas, Correspondence of the Comandante": "89b9e663-48c4-4a2d-8e2e-79420640d439",
+    "Nacogdoches records, Department of Texas, General Correspondence": "3b16b0f4-0fca-41cd-84c2-83b09a3c453c",
+    "Nacogdoches records, Municipality, Accounts": "d26aae61-1c2a-4985-80f7-48754dd54440",
+    "Nacogdoches records, Municipality, Correspondence of the Alcalde": "6fe875be-227d-4da7-8d93-a414796072f1",
+    "Nacogdoches records, Municipality, Correspondence of the Comandante": "c921d31f-a3bb-45cf-a681-49f5c8a54ba8",
+    "Nacogdoches records, Municipality, Correspondence of the Jefe": "a0407bbe-bfb3-4c9c-996b-a3ecd0cfe6e6",
+    "Nacogdoches records, Municipality, Correspondence of the Juez": "febdf52f-bb83-42ca-9c4d-4c073e0201b8",
+    "Nacogdoches records, Municipality, General Correspondence": "8d743c52-a8b0-453f-ae28-90c4b57f218c",
+    "Nacogdoches records, Municipality, Oaths and Citizenships": "aff594a6-558e-4cbd-99eb-eb681e0e41fe",
+    "Nacogdoches records, Municipality, Proceedings": "962281c5-94c4-4bca-a232-73f3491d89b0",
+    "Nacogdoches records, Municipality, Procesos Legales": "2996c1d5-7c1e-4807-a55b-8de95ca983b5",
+    "Nacogdoches records, Municipality, Subordinate": "78208102-9e2b-4c6b-a930-63c4978dd691",
+    "Nacogdoches records, Province of Coahuila-Texas, Correspondence of the Governors": "88de67d8-2c82-4823-beb2-98c4b7e1d83b",
+    "Nacogdoches records, Province of Coahuila-Texas, Decrees": "34bf630f-cbad-4bd8-85f3-abb9cb82a5af",
+    "Nacogdoches records, Province of Coahuila-Texas, General Correspondence": "29dc0ef8-1fdd-44c7-bccc-7edebaa6a1f7",
+    "Nacogdoches records, Province of Coahuila-Texas, Residencias": "cda416d5-8d9f-45a5-bebf-bc89534b4d3f"
+}
+
+
 def row_generator(row_data):
     sender = row_data['sender']
     recipient = row_data['recipient']
@@ -37,12 +65,14 @@ def row_generator(row_data):
     series = row_data['series_path']
     microfilm_reel = row_data['Microfilm Reel Number']
     box = row_data['Box/Folder']
+    while box.endswith("*"):
+        box = box[:-1]
     row = f'''<tr>
         <td>{sender}</td>
         <td>{recipient}</td>
         <td>{location}</td>
         <td>{date}</td>
-        <td>{series}</td>
+        <td><a href="https://tsl.access.preservica.com/uncategorized/SO_{url_dict[series]}" target="_blank">{series}</a></td>
         <td>{microfilm_reel}</td>
         <td>{box}</td>
     </tr>'''
@@ -52,29 +82,55 @@ df = PD.read_excel("/media/sf_F_DRIVE/Archives/Electronic_records/Texas_Digital_
 print(df)
 listy = df.columns
 start = "1"
-locations = set()
-series = set()
-table_html = ""
+locations1 = set()
+series1 = set()
+locations2 = set()
+series2 = set()
+table_html1 = ""
+table_html2 = ""
 for row in df.itertuples():
     my_dict = row_converter(row, listy)
-    my_dict['sender'] = my_dict['Sender Name']
-    my_dict['recipient'] = my_dict['Recipient Name']
-    locations.add(my_dict['Location'])
-    series_name = f"{my_dict['Record Group']}, {my_dict['Series']}, {my_dict['SubSeries']}"
-    while series_name.endswith(", "):
-        series_name = series_name[:-2]
-    series.add(series_name)
-    my_dict['series_path'] = series_name
-    my_row = row_generator(my_dict)
-    table_html += my_row
+    if my_dict['type'] == "Correspondence":
+        my_dict['sender'] = my_dict['Sender Name']
+        my_dict['recipient'] = my_dict['Recipient Name']
+        locations1.add(my_dict['Location'])
+        series_name = f"{my_dict['Record Group']}, {my_dict['Series']}, {my_dict['SubSeries']}"
+        while series_name.endswith(", "):
+            series_name = series_name[:-2]
+        series1.add(series_name)
+        my_dict['series_path'] = series_name
+        my_row = row_generator(my_dict)
+        table_html1 += my_row
+    else:
+        my_dict['sender'] = my_dict['Sender Name']
+        if my_dict['Title'] != "":
+            my_dict['recipient'] = my_dict['Title']
+        elif my_dict['Description'] != "":
+            my_dict['recipient'] = my_dict['"Description']
+        else:
+            my_dict['recipient'] = "Untitled document"
+        if len(my_dict['recipient']) > 50:
+            my_dict['recipient'] = f"{my_dict['recipient'][:50]}..."
+        locations2.add(my_dict['Location'])
+        series_name = f"{my_dict['Record Group']}, {my_dict['Series']}, {my_dict['SubSeries']}"
+        while series_name.endswith(", "):
+            series_name = series_name[:-2]
+        series2.add(series_name)
+        my_dict['series_path'] = series_name
+        my_row = row_generator(my_dict)
+        table_html2 += my_row
 
-locations = optionGenerator(locations)
-series = optionGenerator(series)
+
+locations1 = optionGenerator(locations1)
+series1 = optionGenerator(series1)
+locations2 = optionGenerator(locations2)
+series2 = optionGenerator(series2)
 
 table_head = "<table id='table'>\n<tbody>\n"
 table_head = f"{table_head}<tr style='background-color:lightgray; border-bottom:3px solid blank; padding: 0px;' class='silly'><td>Sender Name</td><td>Recipient Name</td><td>Location</td>" \
-             f"<td>Date</td><td>Records Series</td><td>Microfilm Reel</td><td>Box</td></tr>"
-
+             f"<td>Date</td><td>Records Series</td><td>Microfilm Reel</td><td>Box.Folder</td></tr>"
+table_head2 = table_head.replace("Sender Name", "Creator").replace("Recipient Name", "Title/Description")
+aboutme = "We really need some text here"
 page_head = '''<html>
 <style>
 	.tdaSearch_search_container{display:table; border: 1px outset; border-radius: 10px}
@@ -282,16 +338,17 @@ label{display: inline-block; padding-bottom: 5px;}
 		}	
 	</style>
 	'''
-html_top = f'''
+html_top1 = f'''
 <div style="width:100%">
 <div width="100%" class="container">
       <h2 class="tdaSearch_search_title" style="text-align:center; color: #a91e2f;" id="top">
-        <strong>Nacogdoches Archive filter table</strong>
+        <strong>Nacogdoches Archive Correspondence filter table</strong>
       </h2>
     </div>
 <p class="tdaSearch_link2" style="text-align:center">
       <a href="https://tsl.access.preservica.com/uncategorized/SO_858938f7-c553-43c5-bda8-58fb3cd6ad5d/" alt="Browse the Nacogdoches Archive">Browse the Nacogdoches Archive</a>
     </p>
+    <p><a href="#about">About the Nacogdoches Archive</a></p>
 <div align="center" class="tdaSearch_search_container">
       <div align="left" class="tdaSearch_search_warning">
         <p>Use the options below to filter correspondence and other material listed in the <a href="#table">results table</a>. Search tips:
@@ -336,7 +393,7 @@ html_top = f'''
               <br>
               <select id="location_drop">
                 <option value="">Selection a location referenced in the correspondence</option>
-                {locations}
+                {locations1}
               </select>
             </h3>
           </div>
@@ -353,7 +410,7 @@ html_top = f'''
               <br>
               <select id="record_group">
                 <option value="">Select an applicable record group</option>
-                {series}
+                {series1}
               </select>
             </h3>
           </div>
@@ -373,9 +430,112 @@ html_top = f'''
         </p>
       </div>
     </div>
+    <div class="tdaSearch_bottom_text">
+    <h2 id="about">About the Nacogdoches Archive</h2>
+    <p><a href="#top">Back to top</a></p>
+     {aboutme}
+    </div>
+'''
+html_top2 = f'''
+<div style="width:100%">
+<div width="100%" class="container">
+      <h2 class="tdaSearch_search_title" style="text-align:center; color: #a91e2f;" id="top">
+        <strong>Nacogdoches Archive Documents filter table</strong>
+      </h2>
+    </div>
+<p class="tdaSearch_link2" style="text-align:center">
+      <a href="https://tsl.access.preservica.com/uncategorized/SO_858938f7-c553-43c5-bda8-58fb3cd6ad5d/" alt="Browse the Nacogdoches Archive">Browse the Nacogdoches Archive</a>
+    </p>
+    <p><a href="#about">About the Nacogdoches Archive</a></p>
+<div align="center" class="tdaSearch_search_container">
+      <div align="left" class="tdaSearch_search_warning">
+        <p>Use the options below to filter correspondence and other material listed in the <a href="#table">results table</a>. Search tips:
+		<img class="tooltip_image" src="https://tsl.access.preservica.com/wp-content/uploads/sites/10/2020/06/200px-Icon-round-Question_mark.svg_.png" max-width="5px" style="cursor:help" title="Click for search tips" id="tooltip_case_number">
+              </p><div class="tooltip-test" id="tooltip_case_number_1" style="display:none;">
+                <div class="modal-content">
+                    <span class="closeify" id="closeify_tooltip_case_number">x</span>
+					<h2 style="color:#a91d2f; text-align:center">Search tips</h2>
+					<p>The following additional information is intended to assist you in using this tool.</p>
+					<ul>
+					<li>This table is derived from transcriptions provided by Ancestry.com and has not been checked for accuracy.</li>
+					<li>Due to the extensive number is registered voters, the information has been broken into filter tables by the microfilm reel they were scanned off of. There are 12 microfilm reels. Reels were filmed roughly by county.</li>
+					<li>If you do not find a name you are searching for in this table, try a different table.</li>
+					<li>Residence Location is very rarely noted in the record but is provided in this table for cases where it is known and could be useful.</li>
+					<li>Text entered into the filters is not case sensitive, but it is spelling sensitive. For example, a partial match on "Dal" would include Dallas and Dalam, but a partial match on "Dala" would be strictly Dalam.</li>
+
+					<li>The <a href="https://txarchives.org/tslac/finding_aids/50082.xml" target="_blank">finding aid</a> has more information about these indexes and how to request the case files identified using this search.</li>
+					</ul>
+                </div>
+              </div>
+      </div>
+
+      <div class="tdaSearch_search_form_left" style="padding-left:10px">
+        <form id="form" onchange="master_filter()" onkeyup="master_filter()">
+          <div class="tdaSearch_thing1">
+            <h3 style="margin-bottom:0.5em; line-height:1em; margin-top:10px;font-size:1em">
+              <label for="creator">Creator</label>
+              <br>
+              <input id="creator" placeholder="Enter creator name" type="text" class="inputs">
+            </h3>
+          </div>
+          <div class="tdaSearch_thing1">
+            <h3 style="margin-bottom:0.5em; line-height:1em; margin-top:10px;font-size:1em">
+              <label for="description">Title/Description</label>
+              <br>
+              <input id="description" placeholder="Enter possible description" type="text" class="inputs">
+            </h3>
+          </div>
+          <div class="tdaSearch_thing1">
+            <h3 style="margin-bottom:0.5em; line-height:1em; margin-top:10px;font-size:1em">
+              <label for="location_drop">Location mentioned in record</label>
+              <br>
+              <select id="location_drop">
+                <option value="">Selection a location referenced in the correspondence</option>
+                {locations2}
+              </select>
+            </h3>
+          </div>
+          <div class="tdaSearch_thing1">
+            <h3 style="margin-bottom:0.5em; line-height:1em; margin-top:10px;font-size:1em">
+              <label for="date">Date on record</label>
+              <br>
+              <input id="date" placeholder="YYYY-MM-DD" type="text" class="inputs">
+            </h3>
+          </div>
+          <div class="tdaSearch_thing1">
+            <h3 style="margin-bottom:0.5em; line-height:1em; margin-top:10px;font-size:1em">
+              <label for="record_group">Found in Record Group</label>
+              <br>
+              <select id="record_group">
+                <option value="">Select an applicable record group</option>
+                {series2}
+              </select>
+            </h3>
+          </div>
+          <div id="NullResultsMessage" style="display:none;border:5px outset #a91d2f;background-color:lightgrey;text-align:center;border-radius:10px;">
+            <p>No matching results. Update your selections from the options above or click on reset to start over.</p>
+          </div>
+          <br>
+          <div class="tdaSearch_thing5">
+            <input onclick="location.reload()" style="height:2.75em;" type="reset" value="Reset options">
+          </div>
+        </form>
+      </div>
+      <div class="tdaSearch_search_form_right">
+        <img title="Voter registration page" caption="Sample voter registration page" src="https://tsl.access.preservica.com/wp-content/uploads/sites/10/2022/06/appealsIndex_thumb2.jpg" class="tdaSearch_graphic" id="court_graphic">
+        <p class="tdaSearch_link1" style="text-align:center">
+          <a href="https://tsl.access.preservica.com/uncategorized/SO_8858938f7-c553-43c5-bda8-58fb3cd6ad5d/" alt="Browse the Nacogdoches Archive">Browse the Nacogdoches Archive</a>
+        </p>
+      </div>
+    </div>
+    <div class="tdaSearch_bottom_text">
+    <h2 id="about">About the Nacogdoches Archive</h2>
+    <p><a href="#top">Back to top</a></p>
+     {aboutme}
+    </div>
 '''
 
-page_booty = '''<script type="text/javascript">
+page_booty1 = '''<script type="text/javascript">
 function master_filter() {
 	var table, tr, i, td1, td2, td3, td4, td5, td6, td7;
 	var filter_sender = sender.value.toUpperCase();
@@ -418,10 +578,58 @@ function master_filter() {
 }
 </script>'''
 
-my_html = f"{page_head}{html_top}{table_head}{table_html}</table>{page_booty}</html>"
+page_booty2 = '''<script type="text/javascript">
+function master_filter() {
+	var table, tr, i, td1, td2, td3, td4, td5, td6, td7;
+	var filter_creator = creator.value.toUpperCase();
+	var filter_description = description.value.toUpperCase();
+	var filter_location = location_drop.options[location_drop.selectedIndex].value;
+	var filter_date = date.value;
+	var filter_series = record_group.options[record_group.selectedIndex].value;
+	table = document.getElementById("table");
+	tr = table.getElementsByTagName("tr");
+	for (i = 1; i < tr.length; i++) {
+		td1 = tr[i].getElementsByTagName("td")[0];
+		td2 = tr[i].getElementsByTagName("td")[1];
+		td3 = tr[i].getElementsByTagName("td")[2];
+		td4 = tr[i].getElementsByTagName("td")[3];
+		td5 = tr[i].getElementsByTagName("td")[4];
+		td6 = tr[i].getElementsByTagName("td")[5];
+		td7 = tr[i].getElementsByTagName("td")[6];
+		if (td1, td2, td3, td4, td5, td6, td7) {
+			if ((td1.innerHTML.toUpperCase().indexOf(filter_creator) > -1) && (td2.innerHTML.toUpperCase().indexOf(filter_description) > -1) && (td3.innerHTML.indexOf(filter_location) > -1) && (td4.innerHTML.toUpperCase().indexOf(filter_date) > -1) && (td5.innerHTML.indexOf(filter_series) > -1)) {
+				tr[i].style.display = "";
+			} else {
+				tr[i].style.display = "none";
+			}
+		}
+	}
+	var tabula = 0;
+	for (i = 1; i < tr.length; i++){
+		if (tr[i].style.display != "none"){
+			tabula = tabula + 1
+		} else {
+			tabula = tabula
+		}
+	}
+	var NullResultsMessage;
+	if (tabula < 1){
+		NullResultsMessage = document.getElementById("NullResultsMessage").style.display="";
+	} else {
+		NullResultsMessage = document.getElementById("NullResultsMessage").style.display="none";
+	}
+}
+</script>'''
 
-with open("/media/sf_F_DRIVE/Archives/Electronic_records/Texas_Digital_Archive/working_materials/search/nacogdoches/output.html", "w") as w:
-    w.write(my_html)
+my_correspondence_html = f"{page_head}{html_top1}{table_head}{table_html1}</table>{page_booty1}</html>"
+my_other_html = f"{page_head}{html_top2}{table_head2}{table_html2}</table>{page_booty2}</html>"
+
+with open("/media/sf_F_DRIVE/Archives/Electronic_records/Texas_Digital_Archive/working_materials/search/nacogdoches/output_correspondence.html", "w") as w:
+    w.write(my_correspondence_html)
+w.close()
+print("all done")
+with open("/media/sf_F_DRIVE/Archives/Electronic_records/Texas_Digital_Archive/working_materials/search/nacogdoches/output_other.html", "w") as w:
+    w.write(my_other_html)
 w.close()
 print("all done")
 
