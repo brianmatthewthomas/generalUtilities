@@ -90,7 +90,7 @@ table_html1 = ""
 table_html2 = ""
 for row in df.itertuples():
     my_dict = row_converter(row, listy)
-    if my_dict['type'] == "Correspondence":
+    if my_dict['Classification'] == "Correspondence":
         my_dict['sender'] = my_dict['Sender Name']
         my_dict['recipient'] = my_dict['Recipient Name']
         locations1.add(my_dict['Location'])
@@ -106,7 +106,7 @@ for row in df.itertuples():
         if my_dict['Title'] != "":
             my_dict['recipient'] = my_dict['Title']
         elif my_dict['Description'] != "":
-            my_dict['recipient'] = my_dict['"Description']
+            my_dict['recipient'] = my_dict['Description']
         else:
             my_dict['recipient'] = "Untitled document"
         if len(my_dict['recipient']) > 50:
@@ -130,7 +130,7 @@ table_head = "<table id='table'>\n<tbody>\n"
 table_head = f"{table_head}<tr style='background-color:lightgray; border-bottom:3px solid blank; padding: 0px;' class='silly'><td>Sender Name</td><td>Recipient Name</td><td>Location</td>" \
              f"<td>Date</td><td>Records Series</td><td>Microfilm Reel</td><td>Box.Folder</td></tr>"
 table_head2 = table_head.replace("Sender Name", "Creator").replace("Recipient Name", "Title/Description")
-aboutme = "We really need some text here"
+aboutme = "The Nacogdoches Archives Record Group includes a variety of records maintained by national, regional, and local officials--both political and military--of the Mexican government from the mid-eighteenth into the early nineteenth century. The records include Spanish colonial and Mexican national government correspondence, decrees, and reports; the correspondence and reports of military and political officials stationed in the Provincias Internas (1776-1824) and, later, the State of Coahuila y Texas; records of the Department of Nacogdoches (northeastern area of Texas), 1830-1836; and municipal records of Nacogdoches and vicinity. Until the 1830s, the records are written in Spanish. The records of the Municipality of Nacogdoches (not to be confused with the Department of Nacogoches) are a mixture of both English- and Spanish-language documents after 1830."
 page_head = '''<html>
 <style>
 	.tdaSearch_search_container{display:table; border: 1px outset; border-radius: 10px}
@@ -351,22 +351,15 @@ html_top1 = f'''
     <p><a href="#about">About the Nacogdoches Archive</a></p>
 <div align="center" class="tdaSearch_search_container">
       <div align="left" class="tdaSearch_search_warning">
-        <p>Use the options below to filter correspondence and other material listed in the <a href="#table">results table</a>. Search tips:
-		<img class="tooltip_image" src="https://tsl.access.preservica.com/wp-content/uploads/sites/10/2020/06/200px-Icon-round-Question_mark.svg_.png" max-width="5px" style="cursor:help" title="Click for search tips" id="tooltip_case_number">
-              </p><div class="tooltip-test" id="tooltip_case_number_1" style="display:none;">
+        <p>Use the options below to filter correspondence and other material listed in the <a href="#table">results table</a>. For more information how to use this search tool click <a href="#tdaSearchHelp" title="Link to description of how this tool works">here</a>. Search tips for senders and recipients
+		<img class="tooltip_image" src="https://tsl.access.preservica.com/wp-content/uploads/sites/10/2020/06/200px-Icon-round-Question_mark.svg_.png" max-width="5px" style="cursor:help" title="Click for search tips" id="tooltip_number">
+              </p><div class="tooltip-test" id="tooltip_number_1" style="display:none;">
                 <div class="modal-content">
-                    <span class="closeify" id="closeify_tooltip_case_number">x</span>
-					<h2 style="color:#a91d2f; text-align:center">Search tips</h2>
-					<p>The following additional information is intended to assist you in using this tool.</p>
-					<ul>
-					<li>This table is derived from transcriptions provided by Ancestry.com and has not been checked for accuracy.</li>
-					<li>Due to the extensive number is registered voters, the information has been broken into filter tables by the microfilm reel they were scanned off of. There are 12 microfilm reels. Reels were filmed roughly by county.</li>
-					<li>If you do not find a name you are searching for in this table, try a different table.</li>
-					<li>Residence Location is very rarely noted in the record but is provided in this table for cases where it is known and could be useful.</li>
-					<li>Text entered into the filters is not case sensitive, but it is spelling sensitive. For example, a partial match on "Dal" would include Dallas and Dalam, but a partial match on "Dala" would be strictly Dalam.</li>
-
-					<li>The <a href="https://txarchives.org/tslac/finding_aids/50082.xml" target="_blank">finding aid</a> has more information about these indexes and how to request the case files identified using this search.</li>
-					</ul>
+                    <span class="closeify" id="closeify_tooltip_number">x</span>
+					<h2 style="color:#a91d2f; text-align:center">Sender and Recipient Search tips</h2>
+					<p>Sender and recipient names may be incomplete. Include last names only in your preliminary search, in addition to full names.</p>
+					<p>Names are also likely to have variations in spelling. For example, “Ybarbo” “Ibarbo” “Ybarvo” and “Ibarvo” might be interchangeable.</p>
+					<p>Some sender and recipient names are titles, such as “Governor” or “Alcalde” rather than individual names. Be sure to reference the <a href"https://www.tsl.texas.gov/ref/abouttx/prerepub.html" title="Link to list of Pre-Republic era Governors of Texas">"Pre-Republic Governors of Texas”</a> list and/or the <a href="https://www.tshaonline.org/handbook" title="Link to Texas State Historical Association's Handbook of Texas online">Handbook of Texas</a> to determine identities and search by the individual’s title when available, in addition to their full name and last name only.</p>
                 </div>
               </div>
       </div>
@@ -430,11 +423,6 @@ html_top1 = f'''
         </p>
       </div>
     </div>
-    <div class="tdaSearch_bottom_text">
-    <h2 id="about">About the Nacogdoches Archive</h2>
-    <p><a href="#top">Back to top</a></p>
-     {aboutme}
-    </div>
 '''
 html_top2 = f'''
 <div style="width:100%">
@@ -449,24 +437,7 @@ html_top2 = f'''
     <p><a href="#about">About the Nacogdoches Archive</a></p>
 <div align="center" class="tdaSearch_search_container">
       <div align="left" class="tdaSearch_search_warning">
-        <p>Use the options below to filter correspondence and other material listed in the <a href="#table">results table</a>. Search tips:
-		<img class="tooltip_image" src="https://tsl.access.preservica.com/wp-content/uploads/sites/10/2020/06/200px-Icon-round-Question_mark.svg_.png" max-width="5px" style="cursor:help" title="Click for search tips" id="tooltip_case_number">
-              </p><div class="tooltip-test" id="tooltip_case_number_1" style="display:none;">
-                <div class="modal-content">
-                    <span class="closeify" id="closeify_tooltip_case_number">x</span>
-					<h2 style="color:#a91d2f; text-align:center">Search tips</h2>
-					<p>The following additional information is intended to assist you in using this tool.</p>
-					<ul>
-					<li>This table is derived from transcriptions provided by Ancestry.com and has not been checked for accuracy.</li>
-					<li>Due to the extensive number is registered voters, the information has been broken into filter tables by the microfilm reel they were scanned off of. There are 12 microfilm reels. Reels were filmed roughly by county.</li>
-					<li>If you do not find a name you are searching for in this table, try a different table.</li>
-					<li>Residence Location is very rarely noted in the record but is provided in this table for cases where it is known and could be useful.</li>
-					<li>Text entered into the filters is not case sensitive, but it is spelling sensitive. For example, a partial match on "Dal" would include Dallas and Dalam, but a partial match on "Dala" would be strictly Dalam.</li>
-
-					<li>The <a href="https://txarchives.org/tslac/finding_aids/50082.xml" target="_blank">finding aid</a> has more information about these indexes and how to request the case files identified using this search.</li>
-					</ul>
-                </div>
-              </div>
+        <p>Use the options below to filter correspondence and other material listed in the <a href="#table">results table</a>. For more information how to use this search tool click <a href="#tdaSearchHelp" title="Link to description of how this tool works">here</a>.</p>
       </div>
 
       <div class="tdaSearch_search_form_left" style="padding-left:10px">
@@ -528,10 +499,17 @@ html_top2 = f'''
         </p>
       </div>
     </div>
+'''
+bottom_text = f'''
     <div class="tdaSearch_bottom_text">
-    <h2 id="about">About the Nacogdoches Archive</h2>
     <p><a href="#top">Back to top</a></p>
-     {aboutme}
+    <h2 id="tdaSearchHelp">How to use the Nacogdoches Archive Browse Tool</h2>
+    <p>The Nacogdoches Archives Browse Tool was developed to assist researchers in filtering the collected data to narrow down results. Filtering options include sender name, recipient name, sender’s location, date (YYYY-MM-DD), image and document location (microfilm reel and box/folder) and associated record group, series and subseries if applicable.</p>
+    <p>It is not a search engine and will not return exact or perfect results, as the data itself is not perfect and remains a working, ongoing project. Not every entry has every field available to reference. Some entries may not include a location, date, sender or recipient name, etc.</p>
+    <p>Alternatively, there is a spreadsheet to download that researchers can manipulate and explore freely, containing the entire data set.</p>
+    <p>Please note, some records have been digitized from their original microfilm reel but have not been included in the dataset. There are images available for the <em>Brazos Archives record group</em> and <em>Additional Correspondence and Printed Material series</em> under the <em>Nacogdoches record group</em>, but these images do not have corresponding data points in the spreadsheet and will require individual review.</p>
+    <h2 id="about">About the Nacogdoches Archive</h2>
+     <p>{aboutme}</p>
     </div>
 '''
 
@@ -577,6 +555,22 @@ function master_filter() {
 	}
 }
 </script>'''
+tooltip1_script = '''<script>
+	var tooltip_number_1 = document.getElementById("tooltip_number_1");
+	var tooltip_number = document.getElementById("tooltip_number");
+	var span = document.getElementById("closeify_tooltip_number");
+	tooltip_number.onclick = function() {
+		tooltip_number_1.style.display = "block";
+	}
+	span.onclick = function() {
+		tooltip_number_1.style.display = "none";
+	}
+	window.onclick = function(event) {
+		if (event.target == tooltip_number_1) {
+			tooltip_number_1.style.display = "none";
+		}
+	}
+</script>'''
 
 page_booty2 = '''<script type="text/javascript">
 function master_filter() {
@@ -621,8 +615,8 @@ function master_filter() {
 }
 </script>'''
 
-my_correspondence_html = f"{page_head}{html_top1}{table_head}{table_html1}</table>{page_booty1}</html>"
-my_other_html = f"{page_head}{html_top2}{table_head2}{table_html2}</table>{page_booty2}</html>"
+my_correspondence_html = f"{page_head}{html_top1}{table_head}{table_html1}</table>{bottom_text}{page_booty1}{tooltip1_script}</html>"
+my_other_html = f"{page_head}{html_top2}{table_head2}{table_html2}</table>{bottom_text}{page_booty2}</html>"
 
 with open("/media/sf_F_DRIVE/Archives/Electronic_records/Texas_Digital_Archive/working_materials/search/nacogdoches/output_correspondence.html", "w") as w:
     w.write(my_correspondence_html)
