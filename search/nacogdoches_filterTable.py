@@ -74,7 +74,6 @@ def row_generator(row_data):
         <td>{date}</td>
         <td><a href="https://tsl.access.preservica.com/uncategorized/SO_{url_dict[series]}" target="_blank">{series}</a></td>
         <td>{microfilm_reel}</td>
-        <td>{box}</td>
     </tr>'''
     return row
 
@@ -126,9 +125,9 @@ series1 = optionGenerator(series1)
 locations2 = optionGenerator(locations2)
 series2 = optionGenerator(series2)
 
-table_head = "<table id='table'>\n<tbody>\n"
+table_head = "<table id='scotx' style='border: 3px solid black; padding: 0px'>\n<tbody>\n"
 table_head = f"{table_head}<tr style='background-color:lightgray; border-bottom:3px solid blank; padding: 0px;' class='silly'><td>Sender Name</td><td>Recipient Name</td><td>Location</td>" \
-             f"<td>Date</td><td>Records Series</td><td>Microfilm Reel</td><td>Box.Folder</td></tr>"
+             f"<td>Date</td><td>Records Series</td><td>Microfilm Reel</td></tr>"
 table_head2 = table_head.replace("Sender Name", "Creator").replace("Recipient Name", "Title/Description")
 aboutme = "The Nacogdoches Archives Record Group includes a variety of records maintained by national, regional, and local officials--both political and military--of the Mexican government from the mid-eighteenth into the early nineteenth century. The records include Spanish colonial and Mexican national government correspondence, decrees, and reports; the correspondence and reports of military and political officials stationed in the Provincias Internas (1776-1824) and, later, the State of Coahuila y Texas; records of the Department of Nacogdoches (northeastern area of Texas), 1830-1836; and municipal records of Nacogdoches and vicinity. Until the 1830s, the records are written in Spanish. The records of the Municipality of Nacogdoches (not to be confused with the Department of Nacogoches) are a mixture of both English- and Spanish-language documents after 1830."
 page_head = '''<html>
@@ -342,16 +341,16 @@ html_top1 = f'''
 <div style="width:100%">
 <div width="100%" class="container">
       <h2 class="tdaSearch_search_title" style="text-align:center; color: #a91e2f;" id="top">
-        <strong>Nacogdoches Archive Correspondence filter table</strong>
+        <strong>Nacogdoches Archives Correspondence filter table</strong>
       </h2>
     </div>
 <p class="tdaSearch_link2" style="text-align:center">
-      <a href="https://tsl.access.preservica.com/uncategorized/SO_858938f7-c553-43c5-bda8-58fb3cd6ad5d/" alt="Browse the Nacogdoches Archive">Browse the Nacogdoches Archive</a>
+      <a href="https://tsl.access.preservica.com/uncategorized/SO_5b55b8ba-4c67-49bc-aea9-919f21faab89/" alt="Browse the Nacogdoches Archive">Browse the Nacogdoches Archive</a>
     </p>
-    <p><a href="#about">About the Nacogdoches Archive</a></p>
+    <p><a href="#about">About the Nacogdoches Archives</a></p>
 <div align="center" class="tdaSearch_search_container">
       <div align="left" class="tdaSearch_search_warning">
-        <p>Use the options below to filter correspondence and other material listed in the <a href="#table">results table</a>. For more information how to use this search tool click <a href="#tdaSearchHelp" title="Link to description of how this tool works">here</a>. Search tips for senders and recipients
+        <p>Use the options below to filter correspondence and other material listed in the <a href="#scotx">results table</a>. For more information how to use this search tool click <a href="#tdaSearchHelp" title="Link to description of how this tool works">here</a>. Search tips for senders and recipients
 		<img class="tooltip_image" src="https://tsl.access.preservica.com/wp-content/uploads/sites/10/2020/06/200px-Icon-round-Question_mark.svg_.png" max-width="5px" style="cursor:help" title="Click for search tips" id="tooltip_number">
               </p><div class="tooltip-test" id="tooltip_number_1" style="display:none;">
                 <div class="modal-content">
@@ -417,9 +416,9 @@ html_top1 = f'''
         </form>
       </div>
       <div class="tdaSearch_search_form_right">
-        <img title="Voter registration page" caption="Sample voter registration page" src="https://tsl.access.preservica.com/wp-content/uploads/sites/10/2022/06/appealsIndex_thumb2.jpg" class="tdaSearch_graphic" id="court_graphic">
+        <img title="Example record from Nacogdoches Archives" caption="Example record" src="https://tsl.access.preservica.com/wp-content/uploads/sites/10/2020/04/filePreview2.jpg" class="tdaSearch_graphic" id="court_graphic">
         <p class="tdaSearch_link1" style="text-align:center">
-          <a href="https://tsl.access.preservica.com/uncategorized/SO_8858938f7-c553-43c5-bda8-58fb3cd6ad5d/" alt="Browse the Nacogdoches Archive">Browse the Nacogdoches Archive</a>
+          <a href="https://tsl.access.preservica.com/uncategorized/SO_5b55b8ba-4c67-49bc-aea9-919f21faab89/" alt="Browse the Nacogdoches Archive">Browse the Nacogdoches Archive</a>
         </p>
       </div>
     </div>
@@ -428,16 +427,16 @@ html_top2 = f'''
 <div style="width:100%">
 <div width="100%" class="container">
       <h2 class="tdaSearch_search_title" style="text-align:center; color: #a91e2f;" id="top">
-        <strong>Nacogdoches Archive Documents filter table</strong>
+        <strong>Nacogdoches Archives Documents filter table</strong>
       </h2>
     </div>
 <p class="tdaSearch_link2" style="text-align:center">
-      <a href="https://tsl.access.preservica.com/uncategorized/SO_858938f7-c553-43c5-bda8-58fb3cd6ad5d/" alt="Browse the Nacogdoches Archive">Browse the Nacogdoches Archive</a>
+      <a href="https://tsl.access.preservica.com/uncategorized/SO_5b55b8ba-4c67-49bc-aea9-919f21faab89/" alt="Browse the Nacogdoches Archive">Browse the Nacogdoches Archive</a>
     </p>
-    <p><a href="#about">About the Nacogdoches Archive</a></p>
+    <p><a href="#about">About the Nacogdoches Archives</a></p>
 <div align="center" class="tdaSearch_search_container">
       <div align="left" class="tdaSearch_search_warning">
-        <p>Use the options below to filter correspondence and other material listed in the <a href="#table">results table</a>. For more information how to use this search tool click <a href="#tdaSearchHelp" title="Link to description of how this tool works">here</a>.</p>
+        <p>Use the options below to filter correspondence and other material listed in the <a href="#scotx">results table</a>. For more information how to use this search tool click <a href="#tdaSearchHelp" title="Link to description of how this tool works">here</a>.</p>
       </div>
 
       <div class="tdaSearch_search_form_left" style="padding-left:10px">
@@ -493,9 +492,9 @@ html_top2 = f'''
         </form>
       </div>
       <div class="tdaSearch_search_form_right">
-        <img title="Voter registration page" caption="Sample voter registration page" src="https://tsl.access.preservica.com/wp-content/uploads/sites/10/2022/06/appealsIndex_thumb2.jpg" class="tdaSearch_graphic" id="court_graphic">
+        <img title="Example record from the Nacogdoches Archives" caption="Example Record" src="https://tsl.access.preservica.com/wp-content/uploads/sites/10/2020/04/filePreview2.jpg" class="tdaSearch_graphic" id="court_graphic">
         <p class="tdaSearch_link1" style="text-align:center">
-          <a href="https://tsl.access.preservica.com/uncategorized/SO_8858938f7-c553-43c5-bda8-58fb3cd6ad5d/" alt="Browse the Nacogdoches Archive">Browse the Nacogdoches Archive</a>
+          <a href="https://tsl.access.preservica.com/uncategorized/SO_5b55b8ba-4c67-49bc-aea9-919f21faab89/" alt="Browse the Nacogdoches Archive">Browse the Nacogdoches Archive</a>
         </p>
       </div>
     </div>
