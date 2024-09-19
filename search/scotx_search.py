@@ -92,7 +92,10 @@ for dirpath, dirnames, filenames in os.walk(metadata):
                         row_dict['link'] = "SO_" + row_dict['link']
                     row_dict['case'] = dom.find(".//dcterms:title", namespaces=nsmap).text
                     row_dict['oldCase'] = dom.find(".//tslac:scotx.oldCaseNumber", namespaces=nsmap).text
-                    row_dict['year'] = dom.find(".//tslac:scotx.dateFiled", namespaces=nsmap).text
+                    row_dict['year'] = "None"
+                    year = dom.find(".//tslac:scotx.dateFiled", namespaces=nsmap)
+                    if year is not None:
+                        row_dict['year'] = year.text
                     years.add(row_dict['year'][:4])
                     row_dict['court'] = dom.find(".//tslac:scotx.court", namespaces=nsmap).text
                     courts.add(row_dict['court'])
