@@ -8,6 +8,9 @@ from xml.dom import minidom
 from xml.etree import ElementTree
 from xml.etree.ElementTree import Element, SubElement
 import PyPDF2
+import tarfile
+import time
+
 
 def create_directory(filename):
     if not os.path.exists(os.path.dirname(filename)):
@@ -16,6 +19,7 @@ def create_directory(filename):
         except OSError as exc:
             if exc.errno != errno.EEXIST:
                 raise
+
 
 def create_sha256(filename):
     sha256 = hashlib.sha256()
@@ -28,10 +32,12 @@ def create_sha256(filename):
     fixity = sha256.hexdigest()
     return fixity
 
+
 def prettyify(elem):
     rough_string = ElementTree.tostring(elem, 'utf-8')
     reparse = minidom.parseString(rough_string)
     return reparse.toprettyxml(indent="    ")
+
 
 def transform_metadata(filename):
     keyword_exceptions = ['newspapers', 'Newspapers']
@@ -221,9 +227,33 @@ def transform_metadata(filename):
     return prettyify(dcterms)
 
 
-source = "/media/sf_X_DRIVE/DigitizationTransferFolder/tslac-newspapers-2023-08-08/sn86088196" #input("source folder: ")
-target = "/media/sf_X_DRIVE/DigitizationTransferFolder/tslac-newspapers-2023-08-08/temp/Terry_County_Voice" #input("target location of sorted files: ")
+source = "/media/sf_Z_DRIVE/Working/Newspaper/in-process/TSLAC-2024-03/sn86089205"  # input("source folder: ")
+target = "/media/sf_Z_DRIVE/Working/Newspaper/in-process/TSLAC-2024-03/processed/sn86089205"  # input("target location of sorted files: ")
+is_tarfile = input("was this received as tarballs? yes/no: ")
+tarfile_opts = ['yes', 'no']
+while is_tarfile not in tarfile_opts:
+    print("wrong answer, type yes or no")
+    is_tarfile = input("was this received as tarballs? yes/no: ")
+if is_tarfile == "yes":
+    dirname_list = []
+    for dirpath, dirnames, filenames in os.walk(source):
+        for dirname in dirnames:
+            dirname_list.append(dirname)
+    print("list of existing folders generated")
+    for dirpath, dirnames, filenames in os.walk(source):
+        for filename in filenames:
+            if filename.endswith(".tar"):
+                root_filename = filename[:-4]
+                if root_filename not in dirname_list:
+                    my_tarfile = os.path.join(dirpath, filename)
+                    tar_dir = f"{dirpath}"
+                    print(f"opening {filename} tarfile at {time.asctime()}")
+                    with tarfile.open(my_tarfile, "r") as tarball:
+                        print(f"opened {filename} tarfile, extracting at {time.asctime()}")
+                        tarball.extractall(path=tar_dir)
+                        print(f"{filename} extracted to {tar_dir}/{root_filename} at {time.asctime()}")
 
+counter = 0
 source_tiffs = set()
 source_pdfs = set()
 for dirpath, dirnames, filenames in os.walk(source):
@@ -237,8 +267,8 @@ source_tiffs.sort()
 source_pdfs = list(source_pdfs)
 source_pdfs.sort()
 for directory in source_tiffs:
-    year = directory.split("/")[-2][:4]
-    identifier = directory.split("/")[-2].split("-")[0]
+    year = directory.split("/")[-3][:4]
+    identifier = directory.split("/")[-3].split("-")[0]
     source_metadata = f"{directory.replace('01_tif', '')}metadata.untl.xml"
     target_directory = f"{target}/{year}/{identifier}/preservation1"
     target_metadata = f"{target_directory}/{identifier}.metadata"
@@ -258,12 +288,12 @@ for directory in source_tiffs:
             source_checksum = create_sha256(filename1)
             target_checksum = create_sha256(filename2)
             if source_checksum != target_checksum:
-                print(f"something went wrong copying {filename1}, exiting")
+                print(f"something went wrong copying {filename1}, exiting, {time.asctime()}")
                 sys.exit()
             print(f"{filename2} verified")
 for directory in source_pdfs:
-    year = directory.split("/")[-2][:4]
-    identifier = directory.split("/")[-2].split("-")[0]
+    year = directory.split("/")[-3][:4]
+    identifier = directory.split("/")[-3].split("-")[0]
     source_metadata = f"{directory.replace('02_pdf', '')}metadata.untl.xml"
     target_directory = f"{target}/{year}/{identifier}/presentation2"
     target_metadata = f"{target_directory}/{identifier}.metadata"
@@ -286,6 +316,7 @@ for directory in source_pdfs:
     merger = PyPDF2.PdfFileMerger()
     files = [q for q in os.listdir(directory) if os.path.isfile(f"{directory}/{q}")]
     files.sort()
+    files_list = []
     for file in files:
         filename1 = os.path.join(directory, file)
         filename2 = os.path.join(target_directory, file)
@@ -298,10 +329,14 @@ for directory in source_pdfs:
             if source_checksum != target_checksum:
                 print(f"something went wrong copying {filename1}, exiting")
                 sys.exit()
-            print(f"{filename2} verified")
+            print(f"{filename2} verified, {time.asctime()}")
+            files_list.append(filename2)
+    files_list.sort()
+    counter += 1
+    print(f"on pdf {counter}")
     if not os.path.isfile(pdf_target):
-        for file in files:
-            merger.append(fileobj=open(filename2, 'rb'))
+        for my_file in files_list:
+            merger.append(fileobj=open(my_file, 'rb'))
         merger.write(pdf_target)
         merger.close()
         print(f"{pdf_target} aggregated, moving on")
