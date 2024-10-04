@@ -4,6 +4,7 @@ import time
 import datetime
 import sys
 import json
+from whisper.utils import get_writer
 '''
 # instructions to get this working
 # install python3
@@ -20,7 +21,7 @@ while crawl_this.startswith("'") or crawl_this.startswith('"'):
 while crawl_this.endswith("'") or crawl_this.endswith('"'):
     crawl_this = crawl_this[:-1]
 
-accept_list = ['mp3', 'MP3', 'mp4', 'MP4', 'wav', 'WAV', 'mov', 'MOV', 'avi', 'AVI']
+accept_list = ['mp3', 'MP3', 'mp4', 'MP4', 'wav', 'WAV', 'mov', 'MOV', 'avi', 'AVI', 'wma', 'WMA', 'mts', 'MTS', 'wmv', 'WMV']
 #load the base model
 print("loading transcription model")
 model = whisper.load_model("medium.en")
@@ -39,8 +40,14 @@ while flag is False:
                     transcription_filename = os.path.join(dirpath, transcription_filename)
                     if not os.path.isfile(transcription_filename):
                         print(f"starting transcription for {filename1} at {time.asctime()}")
+                        time_start = time.time()
                         result = model.transcribe(filename1, fp16=False)
-                        print(f"transcription for {filename1} completed at {time.asctime()}")
+                        time_end = time.time()
+                        print(f"transcription for {filename1} completed at {time.asctime()} in {str(datetime.timedelta(seconds=time_end-time_start))} minutes")
+                        srt_writer = get_writer('srt', dirpath)
+                        srt_writer(result, filename1)
+                        '''
+                        # original manual creation of srt file
                         transcription_string = ""
                         for block in result['segments']:
                             start = str(datetime.timedelta(seconds=block['start']))
@@ -70,6 +77,7 @@ while flag is False:
                         with open(f"{transcription_filename}.json", "w") as w:
                             json.dump(result, w)
                         w.close()
+                        '''
                         print(f"{transcription_filename} created, pausing for 2 minutes for funsies")
                         time.sleep(120)
         print(f"done with this pass on transcription, waiting 5 minutes to check for new recordings, it is {time.asctime()}")
