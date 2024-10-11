@@ -10,6 +10,7 @@ from xml.etree.ElementTree import Element, SubElement
 import PyPDF2
 import tarfile
 import time
+from tqdm import tqdm
 
 
 def create_directory(filename):
@@ -266,7 +267,7 @@ source_tiffs = list(source_tiffs)
 source_tiffs.sort()
 source_pdfs = list(source_pdfs)
 source_pdfs.sort()
-for directory in source_tiffs:
+for directory in tqdm(source_tiffs):
     year = directory.split("/")[-3][:4]
     identifier = directory.split("/")[-3].split("-")[0]
     source_metadata = f"{directory.replace('01_tif', '')}metadata.untl.xml"
