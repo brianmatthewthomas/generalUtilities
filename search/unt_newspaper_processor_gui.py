@@ -1,4 +1,3 @@
-import errno
 import lxml.etree as ET
 import shutil
 import hashlib
@@ -10,62 +9,10 @@ from xml.etree.ElementTree import Element, SubElement
 import PyPDF2
 import tarfile
 import time
-from tqdm import tqdm
 import PySimpleGUI as SG
 import errno
 
-my_icon = b'iVBORw0KGgoAAAANSUhEUgAAAHgAAABsCAQAAAALKr7UAAAAAmJLR0QAAKqNIzIAAAAJcEhZcwAALEsAACxLAaU9lqkAAAAHdElNRQ' \
-          b'fmAhQHBBtCNNv6AAANwUlEQVR42u2ca3hV5ZXHf0lObgRz4WK4WmpAEFFHFBTkMQWUoTyoiIpDrajcpGOFWsaOtCqgraIdO8pDp7VF' \
-          b'awtVKlSpoigXUZDLYBlCRCAkJCEhIUDIhYSEJOec/3zYSdg7yd7nJDlJSJ78z6ez93r3Xuustde7bvtAJzrRiU50ohOd6EQnOtGJTv' \
-          b'iBoA4kSyRdCKKc8x1f4K6M4naGcznBFJLCVrZxquPaaCIbKEWmTxX7mEd0R9RwBPN4mngq+YZdpFFFP0YyghjcrGcRaR1Lu+EsoRyR' \
-          b'zEP0qD0axVjeowKxg6s7krjBLKAMsZ6r6p2L4kkKEVvp13EE/lfOID6kt83PMZdziN8T3jHE7c0exD4G2lK4eB43JUzuGOa8GA+FTH' \
-          b'Kk6sFXiI/ocqmw7SK0iSuHkYVY4XP9DCop5jbzLdsO/fglPcgigwyyyaOAMjx+rQxhFv3J5LdU+aD8jMNcx93sQG0t8PX8svbp8nCe' \
-          b'AvLIIp1jZJJDPueosF17FfchVnHE511Os5HrGE938ttS4HCm8wwJMUyilBxOhRRFl0VrALcAcIFiznCCDNJJJ4s8Cimr0RAA99OXE7' \
-          b'xjOdYwxFbmk8DgthT4OyxiBpFDWMy9QClnya1W7nFyORtRElEVzzAA3JRylhwySSONTHI5SxzTCOJ9Uvy622FySeAadraNwMFMZCk3' \
-          b'hTKFxVwDQBxx1XuLKKeIU5wgnXQyyOaUqzi2LJYEbgO8nOcsOVQwmAqO0IcCyn3e8SyZJDC4bWLpHszncbr15j+Yw2U+iKsoIZ8cMk' \
-          b'ir1n0h52usWJzjDNmkksJRMkmnzDa5WMWDrOJhPx6AAGMUm/AEaay2q7Fwq1jHtEN/0bN6QCPVT10u5kYVnOKPRNnedyXibwS3rkl3' \
-          b'ZSZP0S+Wx3iS+EYvDyGaaK5kDOChhEKyOUoKR8kgK6z4csYRY5P4BxEKuFt3WxrGM0wl9AYWM5mQZlwolQ0cwMMQJjEbqKKYl/gNnL' \
-          b'Wtc4QQAxS3nkFH8DApKFKzdEzNgUfv6KpaQ47XMpVLkuYL8TFhtra1E7G4tcRNYCVlaJD+VM1e07FRPYS6Klgh6iEUruXyyq37hXjL' \
-          b'1v324xhiZmsIG8q9JKFQTVOymosS3SE0XH9WvFz6je4RSlC6ypUoxK9subiVEspIbI3wYjnnUH8tV4maj32KU5jWqEQ3CL2iJPVUsN' \
-          b'aoQNcI8bgtH08iUi+WAYJbSLf38D5PhFw2iXU8QdcAXPI0pURzLVEMBvbRj/54yaWIQvBw0mZZJBOAr8lrSYG/w6v8meF9eInVjAzY' \
-          b'vhZKOacIYjjwLakUATHkUwLlFwWql6LcjJuNuFvKkMO4j30oRN/XLgUSebpWaJoK9JWi1FUT5VJ3JWm9XCKXQTaB7OuIQ/RtKXEH8Q' \
-          b'YlqI9eVoECC69ek0vBmqhfKb56a5qnKr0uxDemmqUZ/0IOXpa0TAAdycN8i1y6U7t9sn9BVU3w0wsUUbsPB+suZUtaKMRmIhpMQt9G' \
-          b'pNlov5m4ltWUowF6XUU+GD+h5zRB92udKhspcpn+qskapP5yyaW3pZpd+E8N6nA6pbhZGHj9xvA4aShcD2i/T6YLdHe1jqL1dhNM+4' \
-          b'JylKLxQmNVqBKNkk0cdR1HEJvpHlhhg7iVj6hEg7VSpX4wvFahtWZ5i09rsMPf1UUuLVOWrhReHq7H12C2I04wOrDi9mIJJ1FXzdJh' \
-          b'P9O8maam13eV3USBy/SIUE89rThRxrg6fN3ILkQRjwTSnMOYwi68aITWqcJPRrNN4T9KbEYMlq4RQi4FiZMWtxTBAxxBFDCvWYlZHQ' \
-          b'xlJSXGb5wtqUzfKEnnfLK5zmTQ6HmTB35fS/WHRml8r25WkBCnuZeehBNBLyazhlJEFtMDF1R1Yz6pKFST9IU8kg5rqnqquyZqn48E' \
-          b'b45J3BjtrD5erDkKFwrSKB1qhMgZGmNcq5RkNrGZQ5QjPGxhTOCi5IlswY0G6bfVLqek1u+i7+msA4M5GmIS+FYVVx9/16T3mY3YrK' \
-          b'o02Ysoprz2qiV8xTwnz9y4iscQ5jOd2Bims4Ah1Qe3samWYC8HzX2NOthLuunb7bUt+v2mBsKHzOVmP9kpqDwKYfw3uxhGPJBLEgco' \
-          b'Coxu43iCoyhE4/SJSQtlmmLSWqQ+dzDoeSbKy7Sj9sx/mccV9JjfUdj/poYVU8n3WyLdm8hmqtBAvVbHaLco2sTs9Tppy95JDTVRjj' \
-          b'LtwQfVz3QmXv/np0W/9hkXOMXQwIeNf6AIxeixei6lQg+aWA3WKw78fahwE+0zFt3/xKLjBXL7I3DBlI8Q+4gLbGjxNBnIpfEWQ67B' \
-          b'LnUzMXqVMhyynR+bKLvqC8vZ/eplOttXB/0JYk4M3Y14N3C7bRf+jT140dVa0aD3rdJcE5tBek5eH/lszWdknfTRrR9ZdPwzeXwKnH' \
-          b'+6by7iF4HqAY1mLWWopxYqzeaWVr1coSMO7H1sSu3Q0/UdkHqYzg9Qik+Bk9xxbiq5KxDidmcZp1CEpmqH7W/t0U8tWlnooBWvFpgo' \
-          b'o7S1HkWlHvXbWgy8oxCRe7FN1pzndg3eYI3UO475z2FdYWKxl5IcaE/rehPtjQ0+IDsUZ6IZ6LNsv1CIHYGoEH6PC8Gar1wfJZfnjE' \
-          b'jWr93zU0WaaJ9qUHsV+oFFxy863v+8xgqxvLH5UEMBdhrHRR+b8acaHOddU7umG484BG1ik6mR24U7GuQyjFmm8UiximyH+58gBTzs' \
-          b'bWzPqCGBc9khNlLquPA9jpm+TWK4UwjINktufoMN3WjuMH1LYa3DNZM5DQUcaLw3rg8vn1KVzCGHZbmsxlv7LZpHbXtZRqxsnk4Yax' \
-          b'vbRzDL1Ob18hfb+jrsxg2pZAZCYNhDZiFbHJatt/wc4xnlQCs2m9rzkTYGbSCRsaZvB/nQhq6EvUY2UhoYgU+yHT6jxGZRGR+YBqqi' \
-          b'mEmkwy0K+dxSur7RMdaZYxqb87DdZEdmHOMwVLGz8V3fhgX28DGVSSTbLLpQMwMEwMDqaSM7HOCwZQvo4aMEGmGxDrtEsxDy2N+UiM' \
-          b'ruEUk7x6e2yVOExamvsdGDgc2m5nwEExz3keP8nAJLdT+4ARezkRV4IZkTgSy/Lkc32dQvKnWvJcbqqQ22+2WhbjZRDlOew956zpJ7' \
-          b'IZf+WI+mWC8ZQWg+DwU2KZzA+Uh9YsPaBsVaWBtiG2d9qa4muscdAsYqLZXLctWp9TpURzTNoPmaCYGeT4ljD5pnEx+7tUxhFubGKa' \
-          b'dBymdMNOH6h2NsHG254nAdrXPPfxgZVwVv892W6Bc9iwbquA17pZptCS2DNKuByLvIaIVUf4Y6hKu7NcAibp86xaICLTZi7ZP8xGEm' \
-          b'q1m4kfwQvWnLYq5ut7AYqhfrVSp2WLQ2zzafytRoy7WitNJi/Em6S8FC7K7XZQggIliPJqnMVuQDutrCZqzW1KFYYjobpvdtrlNcx1' \
-          b'mF6GemXkaFVmuQEOW8wRUtO5jyEFVxjt3ej9XTwuoAC3VxTaFcCA22ecqrtKSOs7rH5KxytEBRQhxnboNd4ICiL4fskrmaJHGFJfFD' \
-          b't5jqWrsUYzozu0GD9jo4K6+2GT+Zl81+F6ubuRu/jAYry7Ff+6TxdNV+flDbInvB8oSvtSkjJNg4q2L92ighFbGMy2kljCA/RG84F9' \
-          b'NMrRajGL+pugWTaDo6yKZRttzGWR3QVMPQk5namlPd4axFiT4a10c13ML2G9VlOXNw8qhNrXlZA86qTG8aer/AqgbeOmthTKE8Uut9' \
-          b'1Je+UF+ThjdLkl60GPQam5XbTT+LEVmlaqZR4czkRy214zqnL1+iqT5HQ1dVl1lDNFulkkqNmlP1J8E2gKnUq+qtYEVqsjJUqfd0nR' \
-          b'BuPuIm2gizqYrRNp/DvVv07/qhfqdCSdLXlp7EDIfmiUdJWqNNOqfj+rEReeexKLANlMYhnn3oh36NNVzcwF42BZ4u/dWPlR8YnsDL' \
-          b'5yS29XvN8/F001eN6M1X6E7L8EqGD/pMPWHsxmd4vvW2IKcAJBk95PfoilSu8SaBH3SsWVdoXY1uv+T2FprvbTQW4I71+RybDXRprb' \
-          b'gRWudAmap5uszQ7QtNePujxdCLfeg+h0Sifvt7uqIUpG76uc7bTlut0jAhPGxj/KWi2xrMpbKLbb7T8DDoVq3WHtshlYOaYcThJ3mW' \
-          b'nlxyiGMbSnSc0vEf5/R7I+Vz8wljLtX/mribUpdWBEDcvbrHKBBlsbAt91tfiORdNFipzRI2Xy8bIywVrHOsyV8SGEEuWtCE4e6aMt' \
-          b'wWjVeIECnMCci7Hy2MYF7A2606OWgssvSUuhuDgm+1nz8U6cs/0VjlN1LYcq2pSSH/ybT29c8a91Eaohf9mLK5iGTNMF5/zecV+tPO' \
-          b'EM6bqJffkXWhXtOVxga0iXGBnGBuPQziWzReZ/x4H/QLTTQKNRn8lG60W0ynNFi/8OGts7XIKOKWsZrradcIYwXeWH3gUMtcqxGGk0' \
-          b'riQcd+eTtBP3aia2xm7w5pllG5OMurDKCDIJGT6P7aqfaLUfLvjBc5PGzljvbppOyK9AuocGmpqVrl1S7dbYzzZ/OfPmYb2iGieAvF' \
-          b'1qb3eVqq3kY1eW3bVRxbFv3ZiQZpv6q0QWOMst23zGyLanJrYTTHUaIeM9pmxfxPy7zLeSlhRvV/SnrZxZ1N/kOwdoRQFlFIHs/7mE' \
-          b'btQHBxGzd1qH+57UQ7xv8DgC8wraZy+5gAAAAldEVYdGRhdGU6Y3JlYXRlADIwMjItMDItMjBUMDc6MDQ6MjcrMDA6MDBxXqaVAAAA' \
-          b'JXRFWHRkYXRlOm1vZGlmeQAyMDIyLTAyLTIwVDA3OjA0OjI3KzAwOjAwAAMeKQAAACZ0RVh0aWNjOmNvcHlyaWdodABObyBjb3B5cm' \
-          b'lnaHQsIHVzZSBmcmVlbHmnmvCCAAAAIXRFWHRpY2M6ZGVzY3JpcHRpb24Ac1JHQiBJRUM2MTk2Ni0yLjFXrdpHAAAAInRFWHRpY2M6' \
-          b'bWFudWZhY3R1cmVyAHNSR0IgSUVDNjE5NjYtMi4xa5wU+QAAABt0RVh0aWNjOm1vZGVsAHNSR0IgSUVDNjE5NjYtMi4xhWT+PAAAAA' \
-          b'BJRU5ErkJggg=='
+my_icon = b'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'
 
 
 def create_directory(filename):
@@ -285,67 +232,84 @@ def transform_metadata(filename):
 
 def tar_extract(source):
     dirname_list = set()
-    print("starting tarball check")
+    window['-STEP-'].update("What we are doing: Tarball extraction")
+    window['-OUTPUT-'].update(f"\nstarting tarball check", append=True)
     tar_list = []
     files_list = os.listdir(source)
-    for item in tqdm(files_list):
+    for item in files_list:
         if os.path.isdir(os.path.join(source, item)):
             dirname_list.add(item)
         if os.path.isfile(os.path.join(source, item)) and item.endswith(".tar"):
             tar_list.append(os.path.join(source, item))
     dirname_list = list(dirname_list)
     dirname_list.sort()
-    print("list of existing folders generated")
-    print("compiled list of tarballs")
-    for item in tqdm(tar_list):
-        filename = item.split("/")[-1]
+    window['-OUTPUT-'].update(f"\nlist of existing folders generated", append=True)
+    window['-OUTPUT-'].update(f"\ncompiled list of tarballs", append=True)
+    tar_count = len(tar_list)
+    tar_processed = 0
+    for item in tar_list:
+        filename = item.split("\\")[-1]
         my_len = len(filename) + 1
         root_filename = filename[:-4]
+        window['-OUTPUT-'].update(f"\nChecking {root_filename}", append=True)
         if root_filename not in dirname_list:
             my_tarfile = item
             tar_dir = f"{item[:-my_len]}"
-            print(f"opening {filename} tarfile at {time.asctime()}")
+            window['-OUTPUT-'].update(f"\nopening {filename} tarfile at {time.asctime()}", append=True)
             tarball = tarfile.open(my_tarfile, "r")
-            print(f"opened {filename} tarfile, extracting at {time.asctime()}")
+            window['-OUTPUT-'].update(f"\nopened {filename} tarfile, extracting at {time.asctime()}", append=True)
             tarball.extractall(path=tar_dir)
-            print(f"{filename} extracted to {tar_dir}/{root_filename} at {time.asctime()}")
+            window['-OUTPUT-'].update(f"\n{filename} extracted to {tar_dir}/{root_filename} at {time.asctime()}", append=True)
             tarball.close()
+        tar_processed += 1
+        window['-folder_progress-'].update_bar(tar_processed, tar_count)
+
 
 
 def tar_check(source):
     dirname_list = set()
-    print("starting tarball check")
+    window['-STEP-'].update("What we are going: checking tar extraction")
+    window['-OUTPUT-'].update("\nstarting tarball check", append=True)
     tar_list = []
     files_list = os.listdir(source)
-    for item in tqdm(files_list):
+    for item in files_list:
         if os.path.isfile(os.path.join(source, item)) and item.endswith(".tar"):
             tar_list.append(os.path.join(source, item))
     dirname_list = list(dirname_list)
     dirname_list.sort()
-    print("list of existing folders generated")
-    print("compiled list of tarballs")
-    for item in tqdm(tar_list):
-        filename = item.split("/")[-1]
+    window['-OUTPUT-'].update("\nlist of existing folders generated", append=True)
+    window['-OUTPUT-'].update("\ncompiled list of tarballs", append=True)
+    tar_count = len(tar_list)
+    tar_checked = 0
+    for item in tar_list:
+        filename = item.split("\\")[-1]
         my_len = len(filename) + 1
         root_filename = filename[:-4]
         tar_dir = item[:-my_len]
         my_tarfile = item
         tarball = tarfile.open(my_tarfile, "r")
         archive_list = tarball.getmembers()
+        archive_count = len(archive_list)
+        archive_processed = 0
         for thingy in archive_list:
             item_name = thingy.name
             if "." in item_name:
                 if not os.path.isfile(f"{tar_dir}/{item_name}"):
                     tarball.extract(thingy, path=tar_dir)
-                    print(f"{item_name} was missing from files, extracted again")
+                    window['-OUTPUT-'].update(f"\n{item_name} was missing from files, extracted again", append=True)
+            archive_processed += 1
+            window['-folder_progress-'].update_bar(archive_processed, archive_count)
         tarball.close()
+        tar_checked += 1
+        window['-overall_progress-'].update_bar(tar_checked, tar_count)
 
 
 def process(source, target):
     counter = 0
     source_tiffs = set()
     source_pdfs = set()
-    print("starting tiff copy-over")
+    window['-STEP-'].update("What we are doing: Processing tiff folders")
+    window['-OUTPUT-'].update("\nstarting tiff copy-over", append=True)
     for dirpath, dirnames, filenames in os.walk(source):
         for filename in filenames:
             if dirpath.endswith("01_tif"):
@@ -356,20 +320,23 @@ def process(source, target):
     source_tiffs.sort()
     source_pdfs = list(source_pdfs)
     source_pdfs.sort()
-    for directory in tqdm(source_tiffs):
-        year = directory.split("/")[-3][:4]
-        identifier = directory.split("/")[-3].split("-")[0]
+    pdf_count = len(source_pdfs)
+    for directory in source_tiffs:
+        year = directory.split("\\")[-3][:4]
+        identifier = directory.split("\\")[-3].split("-")[0]
         source_metadata = f"{directory.replace('01_tif', '')}metadata.untl.xml"
-        target_directory = f"{target}/{year}/{identifier}/preservation1"
-        target_metadata = f"{target_directory}/{identifier}.metadata"
+        target_directory = f"{target}\\{year}\\{identifier}\\preservation1"
+        target_metadata = f"{target_directory}\\{identifier}.metadata"
         if os.path.isfile(source_metadata):
             create_directory(target_metadata)
             metadata = open(target_metadata, 'w', encoding='utf-8')
             metadata.write(transform_metadata(source_metadata))
             metadata.close()
         files = [q for q in os.listdir(directory) if os.path.isfile(f"{directory}/{q}")]
-        print(f"processing {directory}")
-        for file in tqdm(files):
+        window['-OUTPUT-'].update(f"\nprocessing {directory}", append=True)
+        tiff_counter = 0
+        tiff_number = len(files)
+        for file in files:
             filename1 = os.path.join(directory, file)
             filename2 = os.path.join(target_directory, file)
             if not os.path.isfile(filename2):
@@ -379,16 +346,22 @@ def process(source, target):
                 source_checksum = create_sha256(filename1)
                 target_checksum = create_sha256(filename2)
                 if source_checksum != target_checksum:
-                    print(f"something went wrong copying {filename1}, exiting, {time.asctime()}")
+                    window['-OUTPUT-'].update(f"\nsomething went wrong copying {filename1}, exiting, {time.asctime()}", append=True)
                     sys.exit()
-    for directory in tqdm(source_pdfs):
-        year = directory.split("/")[-3][:4]
-        identifier = directory.split("/")[-3].split("-")[0]
+            tiff_counter += 1
+            window['-folder_progress-'].update_bar(tiff_counter, tiff_number)
+        counter += 1
+        window['-overall_progress-'].update_bar(counter, pdf_count)
+    counter = 0
+    window['-STEP-'].update("What we are doing: PDF processing")
+    for directory in source_pdfs:
+        year = directory.split("\\")[-3][:4]
+        identifier = directory.split("\\")[-3].split("-")[0]
         source_metadata = f"{directory.replace('02_pdf', '')}metadata.untl.xml"
-        target_directory = f"{target}/{year}/{identifier}/presentation2"
-        target_metadata = f"{target_directory}/{identifier}.metadata"
-        presentation3_metadata = f"{target}/{year}/{identifier}/presentation3/{identifier}.metadata"
-        pdf_target = f"{target}/{year}/{identifier}/presentation3/{identifier}.pdf"
+        target_directory = f"{target}\\{year}\\{identifier}\\presentation2"
+        target_metadata = f"{target_directory}\\{identifier}.metadata"
+        presentation3_metadata = f"{target}\\{year}\\{identifier}\\presentation3\\{identifier}.metadata"
+        pdf_target = f"{target}\\{year}\\{identifier}\\presentation3\\{identifier}.pdf"
         pdf_target_metadata = f"{pdf_target}.metadata"
         if os.path.isfile(source_metadata):
             create_directory(target_metadata)
@@ -403,10 +376,12 @@ def process(source, target):
             pdf_target_metadata = open(pdf_target_metadata, 'wt', encoding='utf-8')
             pdf_target_metadata.write(transform_metadata(source_metadata))
             pdf_target_metadata.close()
-        merger = PyPDF2.PdfFileMerger()
+        merger = PyPDF2.PdfMerger()
         files = [q for q in os.listdir(directory) if os.path.isfile(f"{directory}/{q}")]
         files.sort()
         files_list = []
+        pdf_counter = 0
+        pdf_number = len(files)
         for file in files:
             filename1 = os.path.join(directory, file)
             filename2 = os.path.join(target_directory, file)
@@ -417,10 +392,12 @@ def process(source, target):
                 source_checksum = create_sha256(filename1)
                 target_checksum = create_sha256(filename2)
                 if source_checksum != target_checksum:
-                    print(f"something went wrong copying {filename1}, exiting")
+                    window['-OUTPUT-'].update(f"\nsomething went wrong copying {filename1}, exiting", append=True)
                     sys.exit()
-                print(f"{filename2} verified, {time.asctime()}")
+                window['-OUTPUT-'].update(f"\n{filename2} verified, {time.asctime()}", append=True)
                 files_list.append(filename2)
+            pdf_counter += 1
+            window['-folder_progress-'].update_bar(pdf_counter, pdf_number)
         files_list.sort()
         counter += 1
         if not os.path.isfile(pdf_target):
@@ -428,7 +405,8 @@ def process(source, target):
                 merger.append(fileobj=open(my_file, 'rb'))
             merger.write(pdf_target)
             merger.close()
-            print(f"{pdf_target} aggregated, moving on")
+            window['-OUTPUT-'].update(f"\n{pdf_target} aggregated, moving on", append=True)
+        window['-overall_progress-'].update_bar(counter, pdf_count)
 
 SG.theme("DarkGreen4")
 layout = [
@@ -446,7 +424,7 @@ layout = [
     ],
     [
         SG.Text(text="Did this come as tarfiles?"),
-        sg.Push(),
+        SG.Push(),
         SG.Radio(text="Yes", group_id="tarball", key="-tarball_true-"),
         SG.Push(),
         SG.Radio(text="No", default=True, group_id="tarball", key="-tarball_false-")
@@ -455,13 +433,28 @@ layout = [
         SG.Text(text="Select execute to start, select close to close window")
     ],
     [
-        SG.Button(button_text="Execute", blind_return_key=True),
+        SG.Button(button_text="Execute", bind_return_key=True),
         SG.Push(),
         SG.Button(button_text="Close")
     ],
     [
         SG.Push(),
-        SG.Text("Total Volumes Progress"),
+        SG.Text("What we are doing", key="-STEP-"),
+        SG.Push()
+    ],
+    [
+        SG.Push(),
+        SG.Text("Total Progress"),
+        SG.Push()
+    ],
+    [
+        SG.Push(),
+        SG.ProgressBar(max_value=1, orientation="h", size=(50, 5), key="-overall_progress-", border_width=5, relief="RELIEF_SUNKEN"),
+        SG.Push()
+    ],
+    [
+        SG.Push(),
+        SG.Text(text="Current Progress"),
         SG.Push()
     ],
     [
@@ -470,18 +463,13 @@ layout = [
         SG.Push()
     ],
     [
-        SG.Push(),
-        SG.Text(text="Current Volume Progress"),
-        SG.Push()
-    ],
-    [
         SG.Text("What is happening")
     ],
     [
-        SG.Push(),
+        SG.Image(my_icon),
         SG.Multiline(default_text="Click execute to start, this box will show progress\n-----------------------------------",
                      size=(70, 5), autoscroll=True, border_width=5, auto_refresh=True, reroute_stdout=False, key="-OUTPUT-"),
-        SG.Push()
+        SG.Image(my_icon)
     ],
 ]
 
@@ -501,28 +489,22 @@ while True:
     if values['-tarball_true-'] is True:
         is_tarfile = True
     if event == "Execute":
+        if is_tarfile is True:
+            window['-OUTPUT-'].update(f"\nMaking pass on already extracted tarballs just in case something got missed", append=True)
+            process(source, target)
+            window['-OUTPUT-'].update(f"\nStarting extraction routine", append=True)
+            tar_extract(source)
+            window['-OUTPUT-'].update(f"\nRechecking extracted tarballs for missing files", append=True)
+            tar_check(source)
+            window['-OUTPUT-'].update(f"\nTar extractions verified, moving on to processing", append=True)
+            process(source, target)
+            window['-OUTPUT-'].update(f"\nAll Done", append=True)
+        if is_tarfile is False:
+            window['-OUTPUT-'].update(f"\nMaking first pass on processing newspaper", append=True)
+            process(source, target)
+            window['-OUTPUT-'].update(f"\nMaking second pass on processing newspaper just in case", append=True)
+            process(source, target)
+            window['-OUTPUT-'].update(f"\nAll Done", append=True)
     if event == "Close" or event == SG.WIN_CLOSED:
         break
-
-source = "/media/sf_Z_DRIVE/Working/Newspaper/incomplete/sn84022278"  # input("source folder: ")
-target = "/media/sf_Z_DRIVE/Working/Newspaper/incomplete/processed/sn84022278_DallasHerald"  # input("target location of sorted files: ")
-is_tarfile = input("was this received as tarballs? yes/no: ")
-tarfile_opts = ['yes', 'no']
-while is_tarfile not in tarfile_opts:
-    print("wrong answer, type yes or no")
-    is_tarfile = input("was this received as tarballs? yes/no: ")
-if is_tarfile == "yes":
-    print("making pass on already extracted tarballs just in case")
-    process(source, target)
-    print("starting extraction routine")
-    tar_extract(source)
-    print("rechecking extracted tarballs for missing files")
-    tar_check(source)
-    print(f"tar extractions verified, moving on to processing")
-    process(source, target)
-    print("making second pass on processing newspapers just in case")
-if is_tarfile == "no":
-    print("making first pass on processing newspaper")
-    process(source, target)
-    print("making second pass on processing newspaper just in case")
-print("all done!")
+window.close()
