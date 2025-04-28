@@ -73,7 +73,7 @@ layout = [
     ],
     [
         SG.Push(),
-        SG.Multiline(default_text="Click start to start process, it may be necessary to press start twice\nuse transfer_inventory.csv file to populate for six "
+        SG.Multiline(default_text="Click start to start process, it may be necessary to press start twice\nuse transfer_helper.csv file to populate for six "
                                   "columns of transfer form E-records Inventory tab\ninclude checksum.exf file in "
                                   "the transfer\n\n",
                      size=(115, 10), auto_refresh=True, reroute_stdout=False, key="-OUTPUT-", autoscroll=True, border_width=5),
@@ -103,7 +103,7 @@ while True:
             os.remove(checksum_file)
         checksums = open(checksum_file, "a")
         # set up csv file
-        my_csv = open("transfer_inventory.csv", 'w', newline='')
+        my_csv = open("transfer_helper.csv", 'w', newline='')
         csv_writer = csv.writer(my_csv, delimiter=",", quotechar='\"', quoting=csv.QUOTE_MINIMAL)
         csv_writer.writerow(["Copy lines 3 through to the bottom into the first 6 columns of the transfer spreadsheet E-records Inventory tab"])
         csv_writer.writerow(["Grand total information for the PDF transfer form is at the bottom of this spreadsheet"])
@@ -195,7 +195,7 @@ while True:
         window['-OUTPUT-'].update("Finishing up process\n", append=True)
         my_csv.close()
         checksums.close()
-        window['-OUTPUT-'].update("All done, remember to open transfer_inventory.csv in a spreadsheet program and copy into the first 6 columns of Archival-Transfer-Inventory.xlsx spreadsheet\n", append=True)
+        window['-OUTPUT-'].update("All done, remember to open transfer_helper.csv in a spreadsheet program and copy into the first 6 columns of Archival-Transfer-Inventory.xlsx spreadsheet\n", append=True)
         print("all done")
     if event == "Close" or event == SG.WIN_CLOSED:
         break

@@ -26,11 +26,11 @@ The information is aggregated at the folder-level to generate the date range of 
 
 This tool will create two files:
 *	checksum.exf
-*	transfer_inventory.csv
+*	transfer_helper.csv
 
 The checksum.exf file is a technical file with checksums for each file that it lists. It doubles as item-level inventory. **Include this in your transfer documentation**.
 
-The transfer_inventory.csv file is a temporary spreadsheet with the aggregated folder information to be copied into the first six columns of the formal transfer inventory excel (xlsx) file. **Do not include the transfer_inventory.csv in the transfer documentation**.
+The transfer_helper.csv file is a temporary spreadsheet with the aggregated folder information to be copied into the first six columns of the formal transfer inventory excel (xlsx) file. **Do not include the transfer_helper.csv in the transfer documentation**.
 
 ### Tool Limitations
 The tool has specific limitations.
@@ -52,7 +52,7 @@ Once the tool has started, it will look like the window shown below.
 
 ![](./media/transfer_utility_fileOptions.PNG)
 
-Checking the Include files in inventory spreadsheet box will add file-level information to the transfer_inventory.csv spreadsheet output. This data is already aggregated for the folder-level information that will always be included in the transfer_inventory.csv file so using this option will not increase time-in-process. **For large file sets this is not recommended as it will make review of the transfer excel spreadsheet challenging for staff of both agencies**.
+Checking the Include files in inventory spreadsheet box will add file-level information to the transfer_helper.csv spreadsheet output. This data is already aggregated for the folder-level information that will always be included in the transfer_helper.csv file so using this option will not increase time-in-process. **For large file sets this is not recommended as it will make review of the transfer excel spreadsheet challenging for staff of both agencies**.
 ### 3. Folder Browse
 Click on the Browse button on the right-hand side of the interface and navigate to the folder you wish to process. 
 
@@ -78,11 +78,11 @@ Open the resulting checksum.exf to spot-check it caught all the files involved i
 
 ![](./media/checksum_screenshot.png)
 
-Open the resulting transfer_inventiry.csv file using MS Excel to check the folder data is correct.
+Open the resulting transfer_helper.csv file using MS Excel to check the folder data is correct.
 
 ![](./media/transferCSV_copied.png)
 ### 6. Copy the Transfer Inventory
-Open the MS Excel Archival Transfer Inventory xlsx file. In transfer_inventory.csv highlight all rows that have file information.
+Open the MS Excel Archival Transfer Inventory xlsx file. In transfer_helper.csv highlight all rows that have file information.
 
 ![](./media/transferCSV_copied.png)
 
