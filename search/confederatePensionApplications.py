@@ -54,6 +54,12 @@ for dirpath, dirnames, filenames in os.walk(seriousFilepath):
 				with open(filename, "r") as f:
 					filedata = f.read()
 					if "<xip:Entity>" in filedata:
+						if "/v6.7" in filedata:
+							version = "6.7"
+						if "/v6.6" in filedata:
+							version = "6.6"
+						if "/v6.5" in filedata:
+							version = "6.5"
 						if "/v6.4" in filedata:
 							version = "6.4"
 						if "/v6.3" in filedata:
