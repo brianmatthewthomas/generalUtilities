@@ -14,6 +14,7 @@ my_globe = b'R0lGODlhKAAoAIcAAP8A/wsLCxERERYWFhwcHCIiIgAhMQApMScnJwApOQApQi0tLQA
 def login(url, payload):
 	#this will log into the preservica API and get an access token
 	auth = requests.post(url, data=payload).json()
+	window['-OUTPUT-'].update(f"{auth}\n", append=True)
 	sessionToken = auth["token"]
 	headers = {'Preservica-Access-Token': sessionToken}
 	headers['Content-Type'] = 'application/xml'
@@ -129,9 +130,11 @@ def upload_updates(valuables=dict):
 				current_count += 1
 				window['-Progress-'].update_bar(current_count, total_files)
 				window['-Progress_text-'].update(f"Completed {current_count}/{total_files}")
-				if timer <= time.time():
-					headers = login(url, headers)
-					timer = time.time() + 600
+			if timer <= time.time():
+				window['-OUTPUT-'].update("time to log back in\n", append=True)
+				headers = login(url, headers)
+				window['-OUTPUT-'].update(f"{headers}\n", append=True)
+				timer = time.time() + 600
 	window['-OUTPUT-'].update(f"all done", append=True)
 
 SG.theme("DarkGreen5")
