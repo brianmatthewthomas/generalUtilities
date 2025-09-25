@@ -132,7 +132,7 @@ def upload_updates(valuables=dict):
 				window['-Progress_text-'].update(f"Completed {current_count}/{total_files}")
 			if timer <= time.time():
 				window['-OUTPUT-'].update("time to log back in\n", append=True)
-				headers = login(url, headers)
+				headers = login(url, payload)
 				window['-OUTPUT-'].update(f"{headers}\n", append=True)
 				timer = time.time() + 600
 	window['-OUTPUT-'].update(f"all done", append=True)
