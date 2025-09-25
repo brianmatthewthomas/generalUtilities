@@ -1,29 +1,3 @@
-<dcterms:dcterms xsi:schemaLocation="http://dublincore.org/documents/dcmi-terms/ qualifiedDcSchema.xsd" xmlns:tslac="https://www.tsl.texas.gov/" xmlns:dcterms="http://dublincore.org/documents/dcmi-terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<dcterms:dcterms xsi:schemaLocation="http://dublincore.org/documents/dcmi-terms/ qualifiedDcSchema.xsd" xmlns="http://dublincore.org/documents/dcmi-terms/" xmlns:opex="http://www.openpreservationexchange.org/opex/v1.2" xmlns:tslac="https://www.tsl.texas.gov/" xmlns:dcterms="http://dublincore.org/documents/dcmi-terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><dcterms:identifier.filename>2024084_112_X</dcterms:identifier.filename><dcterms:relation.isFormatOf>Master film reel 10</dcterms:relation.isFormatOf><dcterms:relation.isPartOf>Texas Constitutional Convention of 1974 audiovisual materials</dcterms:relation.isPartOf><dcterms:identifier.bibliographicCitation>Master film reel 10, Texas Constitutional Convention of 1974 audiovisual materials. Archives and Information Services Division, Texas State Library and Archives Commission.</dcterms:identifier.bibliographicCitation><dcterms:title>Master film reel 10: frame 028163</dcterms:title><dcterms:description.abstract>Judiciary committee meeting with retired associate justice of the US Supreme Court Tom C. Clark.</dcterms:description.abstract><dcterms:date.created>1974</dcterms:date.created><dcterms:date.digital>2024</dcterms:date.digital><dcterms:creator>Texas. Constitutional Convention (1974)</dcterms:creator><dcterms:language>English</dcterms:language><dcterms:subject>Constitutional conventions</dcterms:subject><dcterms:type>Moving Image</dcterms:type><dcterms:type>Motion pictures (visual works)</dcterms:type><dcterms:format.extent>16mm (photographic film size)</dcterms:format.extent><dcterms:source>Texas State Library and Archives Commission, 2024/084</dcterms:source><dcterms:rights>Use of this Item is not restricted by copyright and/or related rights. In one or more jurisdictions, laws other than copyright are known to impose restrictions on the use of this Item. Commercial use of legislatively produced audio or visual material is limited (Texas Government Code, Section 306.006). Unless expressly stated otherwise, the Texas State Library and Archives Commission makes no warranties about the Item and cannot guarantee the accuracy of this Rights Statement. You are responsible for your own use. Please contact the Texas State Library and Archives Commission for more information. You may need to obtain other permissions for your intended use. For example, other rights such as publicity, privacy or moral rights may limit how you may use the material.</dcterms:rights>
 
-
-<dcterms:identifier.filename>M-02105</dcterms:identifier.filename>
-<dcterms:relation.isFormatOf>M-2105</dcterms:relation.isFormatOf>
-<tslac:scotx.oldCaseNumber>1520</tslac:scotx.oldCaseNumber>
-<tslac:scotx.dateFiled>1858-10-18</tslac:scotx.dateFiled>
-<dcterms:coverage.spatial>Travis County (Tex.)</dcterms:coverage.spatial>
-<tslac:scotx.reportedIn>Unknown</tslac:scotx.reportedIn>
-<tslac:note>William S. Oldham, John F. Marshall, and Alexander W. Terrell operate under the firm name Oldham, Marshall, and Terrell.</tslac:note>
-<dcterms:description.abstract>Regarding a payment due for legal services.</dcterms:description.abstract>
-<tslac:scotx.court>Unknown</tslac:scotx.court>
-<tslac:scotx.docket>Case not stamped in dockets.</tslac:scotx.docket>
-<tslac:scotx.lawyer>Unknown</tslac:scotx.lawyer>
-<tslac:scotx.presidingJudge>Duval, Thomas Howard</tslac:scotx.presidingJudge>
-<dcterms:relation.isPartOf>Texas Supreme Court records</dcterms:relation.isPartOf><dcterms:identifier.bibliographicCitation>M-02105, M case files, Case files, Texas Supreme Court records. Archives and Information Services Division, Texas State Library and Archives Commission.</dcterms:identifier.bibliographicCitation>
-<dcterms:title>M-02105</dcterms:title>
-<dcterms:creator>Texas. Supreme Court</dcterms:creator>
-<dcterms:date.digital>2018</dcterms:date.digital>
-<dcterms:language>English</dcterms:language>
-<dcterms:type>Text</dcterms:type>
-<dcterms:type>Judicial records</dcterms:type>
-<dcterms:source>Texas State Library and Archives Commission, RG 201</dcterms:source>
-<dcterms:rights>The Texas State Library and Archives Commission believes that the Item is in the Public Domain under the laws of the United States. Unless expressly stated otherwise, the Texas State Library and Archives Commission makes no warranties about the Item and cannot guarantee the accuracy of this Rights Statement. State records may also include materials received by, not created by, state agencies. In that situation, copyright remains with the creator. You are responsible for your own use. Please contact the Texas State Library and Archives Commission for more information. You may need to obtain other permissions for your intended use. For example, other rights such as publicity, privacy or moral rights may limit how you may use the material.</dcterms:rights>
-<tslac:scotx.party>Oldham, Williamson S.; Marshall, John F.; Terrell, Alexander W.</tslac:scotx.party>
-<tslac:scotx.party>Arrington, Claiborne</tslac:scotx.party>
-<dcterms:subject>Debt</dcterms:subject>
-
-<tslac:scotx.causeOfAction>Debt</tslac:scotx.causeOfAction></dcterms:dcterms>
+</dcterms:dcterms>
