@@ -1,9 +1,7 @@
 import lxml.etree as ET
 import os
-import shutil
 import requests
 import time
-import getpass
 import errno
 import PySimpleGUI as SG
 
@@ -13,20 +11,33 @@ my_globe = b'R0lGODlhKAAoAIcAAP8A/wsLCxERERYWFhwcHCIiIgAhMQApMScnJwApOQApQi0tLQA
 
 def login(url, payload):
 	#this will log into the preservica API and get an access token
-	auth = requests.post(url, data=payload).json()
-	window['-OUTPUT-'].update(f"{auth}\n", append=True)
-	sessionToken = auth["token"]
-	headers = {'Preservica-Access-Token': sessionToken}
-	headers['Content-Type'] = 'application/xml'
-	headers['Accept-Charset'] = 'UTF-8'
-	return headers
+	fail_flag = True
+	fail_counter = 0
+	while fail_flag is True:
+		try:
+			auth = requests.post(url, data=payload).json()
+			window['-OUTPUT-'].update(f"{auth}\n", append=True)
+			sessionToken = auth["token"]
+			headers = {'Preservica-Access-Token': sessionToken}
+			headers['Content-Type'] = 'application/xml'
+			headers['Accept-Charset'] = 'UTF-8'
+			fail_flag = False
+			return headers
+		except:
+			fail_counter += 1
+			window['-OUTPUT-'].update("login failed, waiting 5 minutes to see if that clears up the issue\n", append=True)
+			if fail_counter >= 3:
+				window['-OUTPUT-'].update("login failed 3 times, retry later\n", append=True)
+				fail_flag = False
+				return fail_flag
+
 
 def dirMaker(filename):
 	if not os.path.exists(os.path.dirname(filename)):
 		try:
 			os.makedirs(os.path.dirname(filename), exist_ok=True)
 		except OSError as exc:
-			if exc.errno != errno.EExist:
+			if exc.errno != errno.EEXIST:
 				raise
 
 def get_namespaces(filename):
@@ -115,26 +126,33 @@ def upload_updates(valuables=dict):
 				nsmap = get_namespaces(filename)
 				entity_url = get_entityURL(filename, nsmap)
 				filedata = get_filedata(filename, nsmap)
-				response = requests.put(entity_url, headers=headers, data=filedata.encode('utf-8'))
-				status = response.status_code
-				current = time.asctime()
-				success = os.path.join(root_folder, "done", filename1)
-				failure = os.path.join(root_folder, "errors", filename1)
-				window['-OUTPUT-'].update(f"{status} at {current} for {filename1}\n", append=True)
-				if status == 200:
-					dirMaker(success)
-					os.rename(filename, success)
-				if status != 200:
-					dirMaker(failure)
-					os.rename(filename, failure)
-				current_count += 1
-				window['-Progress-'].update_bar(current_count, total_files)
-				window['-Progress_text-'].update(f"Completed {current_count}/{total_files}")
+				try:
+					response = requests.put(entity_url, headers=headers, data=filedata.encode('utf-8'))
+					status = response.status_code
+					current = time.asctime()
+					success = os.path.join(root_folder, "done", filename1)
+					failure = os.path.join(root_folder, "errors", filename1)
+					window['-OUTPUT-'].update(f"{status} at {current} for {filename1}\n", append=True)
+					if status == 200:
+						dirMaker(success)
+						os.rename(filename, success)
+					if status != 200:
+						dirMaker(failure)
+						os.rename(filename, failure)
+					current_count += 1
+					window['-Progress-'].update_bar(current_count, total_files)
+					window['-Progress_text-'].update(f"Completed {current_count}/{total_files}")
+				except:
+					window['-OUTPUT-'].update("something went wrong with uploading changes, exiting this run, try again later\n", append=True)
+					break
 			if timer <= time.time():
 				window['-OUTPUT-'].update("time to log back in\n", append=True)
 				headers = login(url, payload)
 				window['-OUTPUT-'].update(f"{headers}\n", append=True)
 				timer = time.time() + 600
+				if headers is False:
+					window['-OUTPUT-'].update("something went weird trying to login, exiting this run, try again later\n", append=True)
+					break
 	window['-OUTPUT-'].update(f"all done", append=True)
 
 SG.theme("DarkGreen5")
