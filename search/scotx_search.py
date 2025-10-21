@@ -390,7 +390,7 @@ table_text = f'''<table style="border: 3px solid black;padding: 0px" id="scotx">
       {table_data}\n
     </table>'''
 
-output = metadata + "output.html"
+output = f"{metadata}output.html"
 with open(output, "w") as w:
     w.write(form_text + "\n\n\n" + table_text)
 w.close()
