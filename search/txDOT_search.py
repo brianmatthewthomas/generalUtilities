@@ -1,5 +1,4 @@
 import lxml.etree as ET
-import sys
 import os
 import pandas as PD
 
